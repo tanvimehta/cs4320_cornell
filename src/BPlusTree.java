@@ -40,12 +40,21 @@ public class BPlusTree<K extends Comparable<K>, T> {
             root = new LeafNode<K, T>(key, value);
         }
 
-        Entry<K, Node<K,T>> overflowed = insertHelper (root, key, value);
-        if (overflowed != null) {
-            root = new IndexNode<K, T>(overflowed.getKey(), root, overflowed.getValue());
+        // Handle index overflow
+        Entry<K, Node<K,T>> indexOverflow = insertHelper (root, key, value);
+        if (indexOverflow != null) {
+            root = new IndexNode<K, T>(indexOverflow.getKey(), root, indexOverflow.getValue());
         }
 	}
 
+	/**
+	 * Helper method for insert, recursively looks for the right position to insert key 
+	 * Calls handleLeafOverflow
+	 * @param root 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
     public Entry<K, Node<K,T>> insertHelper (Node<K, T> root, K key, T value) {
 
         Entry<K, Node<K,T>> overflow = null;
@@ -54,7 +63,6 @@ public class BPlusTree<K extends Comparable<K>, T> {
             if (((LeafNode<K, T>) root).isOverflowed()) {
                 return splitLeafNode((LeafNode<K, T>) root);
             }
-            return null;
         } else {
             IndexNode<K, T> indexNode = (IndexNode<K, T>) root;
             if (key.compareTo(indexNode.keys.get(0)) < 0) {
@@ -73,12 +81,19 @@ public class BPlusTree<K extends Comparable<K>, T> {
             }
         }
 
-        return handleOverflow(root, overflow);
+        return handleLeafOverflow(root, overflow);
     }
 
-    public Entry<K, Node<K,T>> handleOverflow (Node<K, T> root, Entry<K, Node<K,T>> overflow) {
+    /**
+     * In case of a leaf overflow, finds the right position to insert the new split node.
+     * Checks for index overflow, in case of an index overflow, returns the split index node
+     * @param root
+     * @param overflow
+     * @return
+     */
+    public Entry<K, Node<K,T>> handleLeafOverflow (Node<K, T> root, Entry<K, Node<K,T>> overflow) {
 
-        if (overflow != null) {
+        if (overflow != null && root instanceof IndexNode) {
 
             IndexNode<K, T> indexNode = (IndexNode<K, T>) root;
             if (overflow.getKey().compareTo(indexNode.keys.get(0)) < 0) {
@@ -95,17 +110,19 @@ public class BPlusTree<K extends Comparable<K>, T> {
                 }
             }
 
+            // In case of index overflow
             if (indexNode.isOverflowed()) {
                 return splitIndexNode(indexNode);
+            } else {
+                return null;
             }
-            return null;
         }
 
         return overflow;
     }
     
 	/**
-	 * TODO Split a leaf node and return the new right node and the splitting
+	 * Splits a leaf node and returns the new right node and the splitting
 	 * key as an Entry<splittingKey, RightNode>
 	 * 
 	 * @param leaf, any other relevant data
@@ -143,7 +160,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	}
 
 	/**
-	 * TODO split an indexNode and return the new right node and the splitting
+	 * Splits an indexNode and return the new right node and the splitting
 	 * key as an Entry<splittingKey, RightNode>
 	 * 
 	 * @param index, any other relevant data
