@@ -23,7 +23,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 */
 	public T search(K key) {
 
-        LeafNode leaf = searchLeafNode(root, key);
+        LeafNode<K, T> leaf = searchLeafNode(root, key);
         return (T)leaf.searchValueByKey(key);
 	}
 
@@ -38,10 +38,72 @@ public class BPlusTree<K extends Comparable<K>, T> {
         // If BPlusTree is empty
         if (root == null) {
             root = new LeafNode<K, T>(key, value);
-            return;
+        }
+
+        Entry<K, Node<K,T>> overflowed = insertHelper (root, key, value);
+        if (overflowed != null) {
+            root = new IndexNode<K, T>(overflowed.getKey(), root, overflowed.getValue());
         }
 	}
 
+    public Entry<K, Node<K,T>> insertHelper (Node<K, T> root, K key, T value) {
+
+        Entry<K, Node<K,T>> overflow = null;
+        if (root.isLeafNode) {
+            ((LeafNode<K, T>) root).insertSorted(key, value);
+            if (((LeafNode<K, T>) root).isOverflowed()) {
+                return splitLeafNode((LeafNode<K, T>) root);
+            }
+            return null;
+        } else {
+            IndexNode<K, T> indexNode = (IndexNode<K, T>) root;
+            if (key.compareTo(indexNode.keys.get(0)) < 0) {
+                overflow = insertHelper(indexNode.children.get(0), key, value);
+            } else if (key.compareTo(indexNode.keys.get(indexNode.keys.size() - 1)) >= 0) {
+                overflow = insertHelper(indexNode.children.get(indexNode.children.size() - 1), key, value);
+            } else {
+
+                ListIterator<K> iterator = indexNode.keys.listIterator();
+                while (iterator.hasNext()) {
+                    if (iterator.next().compareTo(key) > 0) {
+                        overflow = insertHelper(indexNode.children.get(iterator.previousIndex()), key, value);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return handleOverflow(root, overflow);
+    }
+
+    public Entry<K, Node<K,T>> handleOverflow (Node<K, T> root, Entry<K, Node<K,T>> overflow) {
+
+        if (overflow != null) {
+
+            IndexNode<K, T> indexNode = (IndexNode<K, T>) root;
+            if (overflow.getKey().compareTo(indexNode.keys.get(0)) < 0) {
+                indexNode.insertSorted(overflow, 0);
+            } else if (overflow.getKey().compareTo(indexNode.keys.get(indexNode.keys.size() - 1)) > 0) {
+                indexNode.insertSorted(overflow, indexNode.keys.size());
+            } else {
+                ListIterator<K> iterator = indexNode.keys.listIterator();
+                while (iterator.hasNext()) {
+                    if (iterator.next().compareTo(overflow.getKey()) > 0) {
+                        indexNode.insertSorted(overflow, iterator.previousIndex());
+                        break;
+                    }
+                }
+            }
+
+            if (indexNode.isOverflowed()) {
+                return splitIndexNode(indexNode);
+            }
+            return null;
+        }
+
+        return overflow;
+    }
+    
 	/**
 	 * TODO Split a leaf node and return the new right node and the splitting
 	 * key as an Entry<splittingKey, RightNode>
@@ -60,7 +122,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
         rightValues.addAll(leaf.values.subList(D, leaf.values.size()));
 
         // Create new right node
-        LeafNode right = new LeafNode(rightKeys, rightValues);
+        LeafNode<K, T> right = new LeafNode<K, T>(rightKeys, rightValues);
 
         // Remove all keys after D keys
         // Found this here: http://stackoverflow.com/questions/10797663/removing-tail-of-x-elements-from-a-list
@@ -94,10 +156,10 @@ public class BPlusTree<K extends Comparable<K>, T> {
         rightKeys.addAll(index.keys.subList(D + 1, index.keys.size()));
 
         // D+1th to last children in new right node
-        List<Node> rightChildren = new ArrayList<Node>();
-        rightChildren.addAll(index.children.subList(D, index.children.size()));
+        List<Node<K, T>> rightChildren = new ArrayList<Node<K, T>>();
+        rightChildren.addAll(index.children.subList(D + 1, index.children.size()));
 
-        IndexNode right = new IndexNode(rightKeys, rightChildren);
+        IndexNode<K, T> right = new IndexNode<K, T>(rightKeys, rightChildren);
 
         // Splitting key is the Dth key in new left node
         // Do this before removing the trailing keys
@@ -160,21 +222,21 @@ public class BPlusTree<K extends Comparable<K>, T> {
      * @param key key of the node to be found
      * @return the leafNode to be searched
      */
-    public LeafNode searchLeafNode(Node root, K key) {
+    public LeafNode<K, T> searchLeafNode(Node<K, T> root, K key) {
 
         if (root == null) {
             return null;
         } else if (root.isLeafNode) {
-            return (LeafNode)root;
+            return (LeafNode<K, T>)root;
         } else {
             // If node is an index node
-            IndexNode<K, T> indexNode = (IndexNode) root;
+            IndexNode<K, T> indexNode = (IndexNode<K, T>) root;
 
             // If key > last key in the node then traverse the rightmost child
-            if (key.compareTo(indexNode.keys.get(indexNode.keys.size() - 1)) > 1) {
+            if (key.compareTo(indexNode.keys.get(indexNode.keys.size() - 1)) >= 0) {
                 return searchLeafNode(indexNode.children.get(indexNode.children.size()-1), key);
             // If key < first key in the node, then traverse the leftmost child
-            } else if (key.compareTo(indexNode.keys.get(0)) < 1) {
+            } else if (key.compareTo(indexNode.keys.get(0)) < 0) {
                 return searchLeafNode(indexNode.children.get(0), key);
             } else {
                 // Traverse through the node to find the leafNode
