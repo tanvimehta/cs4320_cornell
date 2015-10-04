@@ -16,7 +16,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	public static final int D = 2;
 
 	/**
-	 * TODO Search the value for a specific key
+	 * Search the value for a specific key
 	 * 
 	 * @param key
 	 * @return value
@@ -28,7 +28,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	}
 
 	/**
-	 * TODO Insert a key/value pair into the BPlusTree
+	 * Insert a key/value pair into the BPlusTree
 	 * 
 	 * @param key
 	 * @param value
@@ -50,7 +50,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	/**
 	 * Helper method for insert, recursively looks for the right position to insert key 
 	 * Calls handleLeafOverflow
-	 * @param root 
+	 * @param root
 	 * @param key
 	 * @param value
 	 * @return
@@ -190,9 +190,9 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	}
 
 	/**
-	 * TODO Delete a key/value pair from this B+Tree
+	 * Delete a key/value pair from this B+Tree
 	 * 
-	 * @param key
+	 * @param key key of entry to be deleted
 	 */
 	public void delete(K key) {
 		
@@ -211,43 +211,26 @@ public class BPlusTree<K extends Comparable<K>, T> {
 		if (root.keys.size() == 0){
 			root = null;
 		}
-//		if (root.isLeafNode && root.keys.size()==1 && (key.compareTo(root.keys.get(0))==0)) {
-//			root = null;
-//			return;
-//		}
-//		
-//		// Handle case where key is in root
-//		int indexToDelete = deleteHelper(key, root, null);
 	}
 	
-	private IndexNode<K, T> searchIndexNode (Node<K, T> root, K key) {
-		if (root == null || root.isLeafNode) {
-			return null;
-		}
-		
-		if (key.compareTo(root.keys.get(0)) < 0) {
-			return searchIndexNode(((IndexNode<K, T>)root).children.get(0), key);
-		} else if (key.compareTo(root.keys.get(root.keys.size() - 1)) > 0) {
-			return searchIndexNode(((IndexNode<K, T>)root).children.get(((IndexNode<K, T>)root).children.size() - 1), key);
-		} else {
-            ListIterator<K> iterator = root.keys.listIterator();
-            while (iterator.hasNext()) {
-                if (iterator.next().compareTo(key) == 0) {
-                    return (IndexNode<K, T>)root;
-                }
-            }
-		}
-		
-		return null;
-	}
-	
+	/**
+	 * Helper method for delete function, recursively traverses through the tree and calls functions to handle the underflows
+	 * @param key key of entry to be deleted
+	 * @param child the current node being traversed
+	 * @param parent the parent of the current node being traversed
+	 * @param splitIndex the splitkey position in parent if merged so that parent can
+	 *         delete the splitkey later on. -1 otherwise
+	 * @return splitIndex as explained above
+	 */
 	private int deleteHelper (K key, Node<K, T> child, IndexNode<K, T> parent, int splitIndex) {
 		
+		// Add the parent information into the node
 		if (parent != null) {
 			child.setParent(parent);
 			child.setIndexInParent();
 		}
 		
+		// If node is a leaf, delete the key value pair from it
 		if (child.isLeafNode) {
 			LeafNode<K, T> node = (LeafNode<K, T>) child;
 			ListIterator<K> iterator = node.keys.listIterator();
@@ -259,35 +242,20 @@ public class BPlusTree<K extends Comparable<K>, T> {
                 }
             }
             
+            // Handle leaf node underflow
             if (node.isUnderflowed() && node != root) {
             	return handleLeafUnderflowHelper(node);
             } 
-//            else {
-//            	//TODO: FILL THIS WHEN YOU UNDERSTAND WHY YOU NEED THIS
-//            	if (node.keys.size() > 0) {
-//            		IndexNode<K, T> indexNode = searchIndexNode(root, key);
-//            		if (indexNode != null) {
-//            			ListIterator<K> indexIterator = indexNode.keys.listIterator();
-//                        while (indexIterator.hasNext()) {
-//                        	K compareKey = indexIterator.next();
-//                            if (compareKey.compareTo(key) == 0) {
-//                            		indexNode.keys.set(indexIterator.previousIndex(), node.keys.get(0));
-//                            		break;
-//                            }
-//                            
-//                            if (compareKey.compareTo(key) > 0) {
-//                            	break;
-//                            }
-//                        }
-//            		}
-//            	}
-//            }
-		} 
-		// Index node case
+		}
+		
+		// In case current node is index node
 		else {
 			IndexNode<K, T> node = (IndexNode<K, T>) child;
+			
+			// If key is smaller than the first key in the index node, traverse left child
 			if (key.compareTo(node.keys.get(0)) < 0) {
 				splitIndex = deleteHelper(key, node.children.get(0), node, splitIndex);
+			// If key is bigger than the last key in the index node, traverse the right child
 			} else if (key.compareTo(node.keys.get(node.keys.size() - 1)) >= 0) {
 				splitIndex = deleteHelper(key, node.children.get(node.children.size() - 1), node, splitIndex);
 			} else {
@@ -301,6 +269,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			}
 		}
 
+		// Split key deletion
 		if (splitIndex != -1 && child != root) {
 			splitIndex = handleSplitKeyDeletion(splitIndex, child);
 		}
@@ -308,6 +277,11 @@ public class BPlusTree<K extends Comparable<K>, T> {
 		return splitIndex;
 	}
 	
+	/**
+	 * Checks if node has a left sibling, if not, checks for right sibling. Calls handleLeafNodeUnderflow with the appropriate sibling.
+	 * @param node
+	 * @return split key index
+	 */
 	private int handleLeafUnderflowHelper(LeafNode<K, T> node) {
 		// Has left sibling
     	if (node.getIndexInParent() >= 1) {
@@ -320,10 +294,17 @@ public class BPlusTree<K extends Comparable<K>, T> {
     	}
 	}
 
+	/**
+	 * Deletes the entry at the input index from input node
+	 * @param splitIndex split index
+	 * @param node
+	 * @return split key index
+	 */
 	private int handleSplitKeyDeletion(int splitIndex, Node<K, T> node) {
 		
 		node.keys.remove(splitIndex);
 		
+		// Check node underflowed, call handle index underflow
 		if (node.isUnderflowed()) {
 			if (node.getIndexInParent() >= 1) {
 				IndexNode<K, T> leftSibling = (IndexNode<K, T>) node.getParent().children.get(node.getIndexInParent() - 1);
@@ -335,8 +316,9 @@ public class BPlusTree<K extends Comparable<K>, T> {
 		}
 		return -1;
 	}
+	
 	/**
-	 * TODO Handle LeafNode Underflow (merge or redistribution)
+	 * Handle LeafNode Underflow (merge or redistribution)
 	 * 
 	 * @param left
 	 *            : the smaller node
@@ -376,7 +358,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	}
 
 	/**
-	 * TODO Handle IndexNode Underflow (merge or redistribution)
+	 * Handle IndexNode Underflow (merge or redistribution)
 	 * 
 	 * @param leftIndex
 	 *            : the smaller node
@@ -391,6 +373,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			IndexNode<K,T> rightIndex, IndexNode<K,T> parent) {
 		
 		int splittingIndex = 0;
+		
 		// Find the splitting index
 		for (int i = 0; i < parent.keys.size(); i++) {
 			if (parent.children.get(i) == leftIndex && parent.children.get(i+1) == rightIndex) {
@@ -412,7 +395,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			return -1;
 			
 		} else {
-			// MERGE LOGIC
+			// Merge logic
 			leftIndex.keys.add(parent.keys.get(splittingIndex));
 			leftIndex.keys.addAll(rightIndex.keys);
 			leftIndex.children.addAll(rightIndex.children);
