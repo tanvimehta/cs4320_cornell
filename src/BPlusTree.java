@@ -144,7 +144,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
         // Remove all keys after D keys
         // Found this here: http://stackoverflow.com/questions/10797663/removing-tail-of-x-elements-from-a-list
         leaf.keys.subList(D, leaf.keys.size()).clear();
-        leaf.values.subList(D, leaf.keys.size()).clear();
+        leaf.values.subList(D, leaf.values.size()).clear();
 
         if (leaf.nextLeaf != null) {
             right.nextLeaf = leaf.nextLeaf;
@@ -195,9 +195,146 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 * @param key
 	 */
 	public void delete(K key) {
+		
+		int splitIndex = -1;
+		if (root != null) {
+			splitIndex = deleteHelper(key, root, null, splitIndex);
+		}
+		
+		if (splitIndex != -1) {
+			root.keys.remove(splitIndex);
+			if (root.keys.size() == 0) {
+				root = ((IndexNode<K, T>) root).children.get(0);
+			}
+		}
+		
+		if (root.keys.size() == 0){
+			root = null;
+		}
+//		if (root.isLeafNode && root.keys.size()==1 && (key.compareTo(root.keys.get(0))==0)) {
+//			root = null;
+//			return;
+//		}
+//		
+//		// Handle case where key is in root
+//		int indexToDelete = deleteHelper(key, root, null);
+	}
+	
+	private IndexNode<K, T> searchIndexNode (Node<K, T> root, K key) {
+		if (root == null || root.isLeafNode) {
+			return null;
+		}
+		
+		if (key.compareTo(root.keys.get(0)) < 0) {
+			return searchIndexNode(((IndexNode<K, T>)root).children.get(0), key);
+		} else if (key.compareTo(root.keys.get(root.keys.size() - 1)) > 0) {
+			return searchIndexNode(((IndexNode<K, T>)root).children.get(((IndexNode<K, T>)root).children.size() - 1), key);
+		} else {
+            ListIterator<K> iterator = root.keys.listIterator();
+            while (iterator.hasNext()) {
+                if (iterator.next().compareTo(key) == 0) {
+                    return (IndexNode<K, T>)root;
+                }
+            }
+		}
+		
+		return null;
+	}
+	
+	private int deleteHelper (K key, Node<K, T> child, IndexNode<K, T> parent, int splitIndex) {
+		
+		if (parent != null) {
+			child.setParent(parent);
+			child.setIndexInParent();
+		}
+		
+		if (child.isLeafNode) {
+			LeafNode<K, T> node = (LeafNode<K, T>) child;
+			ListIterator<K> iterator = node.keys.listIterator();
+            while (iterator.hasNext()) {
+                if (iterator.next().compareTo(key) == 0) {
+                	node.keys.remove(key);
+                	node.values.remove(iterator.previousIndex());
+                	break;
+                }
+            }
+            
+            if (node.isUnderflowed() && node != root) {
+            	return handleLeafUnderflowHelper(node);
+            } 
+//            else {
+//            	//TODO: FILL THIS WHEN YOU UNDERSTAND WHY YOU NEED THIS
+//            	if (node.keys.size() > 0) {
+//            		IndexNode<K, T> indexNode = searchIndexNode(root, key);
+//            		if (indexNode != null) {
+//            			ListIterator<K> indexIterator = indexNode.keys.listIterator();
+//                        while (indexIterator.hasNext()) {
+//                        	K compareKey = indexIterator.next();
+//                            if (compareKey.compareTo(key) == 0) {
+//                            		indexNode.keys.set(indexIterator.previousIndex(), node.keys.get(0));
+//                            		break;
+//                            }
+//                            
+//                            if (compareKey.compareTo(key) > 0) {
+//                            	break;
+//                            }
+//                        }
+//            		}
+//            	}
+//            }
+		} 
+		// Index node case
+		else {
+			IndexNode<K, T> node = (IndexNode<K, T>) child;
+			if (key.compareTo(node.keys.get(0)) < 0) {
+				splitIndex = deleteHelper(key, node.children.get(0), node, splitIndex);
+			} else if (key.compareTo(node.keys.get(node.keys.size() - 1)) >= 0) {
+				splitIndex = deleteHelper(key, node.children.get(node.children.size() - 1), node, splitIndex);
+			} else {
+				ListIterator<K> iterator = node.keys.listIterator();
+	            while (iterator.hasNext()) {
+	                if (iterator.next().compareTo(key) > 0) {
+	                	splitIndex = deleteHelper(key, node.children.get(iterator.previousIndex()), node, splitIndex);
+	                	break;
+	                }
+	            }
+			}
+		}
 
+		if (splitIndex != -1 && child != root) {
+			splitIndex = handleSplitKeyDeletion(splitIndex, child);
+		}
+		
+		return splitIndex;
+	}
+	
+	private int handleLeafUnderflowHelper(LeafNode<K, T> node) {
+		// Has left sibling
+    	if (node.getIndexInParent() >= 1) {
+    		LeafNode<K, T> leftSibling = (LeafNode<K, T>) node.getParent().children.get(node.getIndexInParent() - 1);
+    		return handleLeafNodeUnderflow(leftSibling, node, node.getParent());
+    	} else {
+    		// Does not have left sibling, so try right sibling
+    		LeafNode<K, T> rightSibling = (LeafNode<K, T>) node.getParent().children.get(node.getIndexInParent() + 1);
+    		return handleLeafNodeUnderflow(node, rightSibling, node.getParent());
+    	}
 	}
 
+	private int handleSplitKeyDeletion(int splitIndex, Node<K, T> node) {
+		
+		node.keys.remove(splitIndex);
+		
+		if (node.isUnderflowed()) {
+			if (node.getIndexInParent() >= 1) {
+				IndexNode<K, T> leftSibling = (IndexNode<K, T>) node.getParent().children.get(node.getIndexInParent() - 1);
+				return handleIndexNodeUnderflow(leftSibling, (IndexNode<K, T>)node, node.getParent());
+			} else {
+				IndexNode<K, T> rightSibling = (IndexNode<K, T>) node.getParent().children.get(node.getIndexInParent() + 1);
+				return handleIndexNodeUnderflow((IndexNode<K, T>)node, rightSibling, node.getParent());
+			}
+		}
+		return -1;
+	}
 	/**
 	 * TODO Handle LeafNode Underflow (merge or redistribution)
 	 * 
@@ -212,8 +349,30 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 */
 	public int handleLeafNodeUnderflow(LeafNode<K,T> left, LeafNode<K,T> right,
 			IndexNode<K,T> parent) {
-		return -1;
-
+		
+		// If redistribute is possible 
+		if ((left.keys.size() + right.keys.size()) >= (2*D)) {
+			int childIndex = parent.children.indexOf(right);
+			// Either node could be underflow
+			if (left.isUnderflowed()) {
+				left.insertSorted(right.keys.remove(0), right.values.remove(0));
+			} else {
+				right.insertSorted(left.keys.remove(left.keys.size()-1), left.values.remove(left.values.size()-1));
+			}
+			parent.keys.set(childIndex - 1, parent.children.get(childIndex).keys.get(0));
+			return -1;
+		} 
+		// If redistribute not possible, merge
+		else {
+			left.keys.addAll(right.keys);
+			left.values.addAll(right.values);
+			left.nextLeaf = right.nextLeaf;
+			
+			int index = parent.children.indexOf(right) - 1;
+			parent.children.remove(right);
+			
+			return index;
+		}
 	}
 
 	/**
@@ -230,7 +389,37 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 */
 	public int handleIndexNodeUnderflow(IndexNode<K,T> leftIndex,
 			IndexNode<K,T> rightIndex, IndexNode<K,T> parent) {
-		return -1;
+		
+		int splittingIndex = 0;
+		// Find the splitting index
+		for (int i = 0; i < parent.keys.size(); i++) {
+			if (parent.children.get(i) == leftIndex && parent.children.get(i+1) == rightIndex) {
+				splittingIndex = i;
+			}
+		}
+		
+		// Redistribute if possible
+		if ((leftIndex.keys.size() + rightIndex.keys.size()) >= (2*D)) {
+			if (leftIndex.isUnderflowed()) {
+				leftIndex.keys.add(parent.keys.get(splittingIndex));
+				parent.keys.set(splittingIndex, rightIndex.keys.remove(0));
+				leftIndex.children.add(rightIndex.children.remove(0));
+			} else {
+				rightIndex.keys.add(0, parent.keys.get(splittingIndex));
+				rightIndex.children.add(0, leftIndex.children.remove(leftIndex.children.size() - 1));
+				parent.keys.set(parent.keys.size()-1, leftIndex.keys.remove(leftIndex.keys.size() - 1));
+			}	
+			return -1;
+			
+		} else {
+			// MERGE LOGIC
+			leftIndex.keys.add(parent.keys.get(splittingIndex));
+			leftIndex.keys.addAll(rightIndex.keys);
+			leftIndex.children.addAll(rightIndex.children);
+			
+			parent.children.remove(parent.children.indexOf(rightIndex));
+			return splittingIndex;
+		}		
 	}
 
     /**

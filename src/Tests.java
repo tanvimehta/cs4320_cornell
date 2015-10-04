@@ -87,7 +87,7 @@ public class Tests {
 		}
 		BPlusTree<Integer, String> tree = new BPlusTree<Integer, String>();
 		Utils.bulkInsert(tree, testNumbers, testNumberStrings);
-
+		Utils.printTree(tree);
 		tree.delete(6);
 		tree.delete(7);
 		tree.delete(8);
