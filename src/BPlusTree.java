@@ -434,7 +434,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			// Add all keys left of the new parent key into the leftIndex
 			// Add all keys right of the new parent key into the rightIndex
 			leftIndex.keys.clear();
-			leftIndex.keys.addAll(allKeys.subList(0, newParentIndex + 1));
+			leftIndex.keys.addAll(allKeys.subList(0, newParentIndex));
 			parent.keys.set(splittingIndex, allKeys.get(newParentIndex));
 			rightIndex.keys.clear();
 			rightIndex.keys.addAll(allKeys.subList(newParentIndex + 1, allKeys.size()));
@@ -442,7 +442,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			// Add all the (n+1) children from 0 to n+1 to the left node
 			// Add the rest of the children to the right index node
 			leftIndex.children.clear();
-			leftIndex.children.addAll(allChildren.subList(0, newParentIndex + 2));
+			leftIndex.children.addAll(allChildren.subList(0, newParentIndex + 1));
 			rightIndex.children.clear();
 			rightIndex.children.addAll(allChildren.subList(newParentIndex + 2, allChildren.size()));
 				
