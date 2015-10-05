@@ -409,21 +409,59 @@ public class BPlusTree<K extends Comparable<K>, T> {
 		
 		// Redistribute if possible
 		if ((leftIndex.keys.size() + rightIndex.keys.size()) >= (2*D)) {
-			if (leftIndex.isUnderflowed()) {
-				// Move splitting key to left node
-				leftIndex.keys.add(parent.keys.get(splittingIndex));
-				// Move leftmost key from right node to parent
-				parent.keys.set(splittingIndex, rightIndex.keys.remove(0));
-				// Move leftmost child of right to left's children
-				leftIndex.children.add(rightIndex.children.remove(0));
+			
+			// All keys including the parent key
+			List<K> allKeys = new ArrayList<K>();
+			allKeys.addAll(leftIndex.keys);
+			allKeys.add(parent.keys.get(splittingIndex));
+			allKeys.addAll(rightIndex.keys);
+			
+			// All children from left and right
+			List<Node<K, T>> allChildren = new ArrayList<Node<K,T>>();
+			allChildren.addAll(leftIndex.children);
+			allChildren.addAll(rightIndex.children);
+			
+			// Get the index of allKeys that will be the new parent key. It would be the middle key in case of odd 
+			// total keys. And one left of the middle for even number of keys.
+			int newParentIndex = 0;
+			if (allKeys.size() % 2 == 0) {
+				newParentIndex = (allKeys.size()/2) - 1;
 			} else {
-				// Move splitting key to right node
-				rightIndex.keys.add(0, parent.keys.get(splittingIndex));
-				// Move last child of left node to right's node
-				rightIndex.children.add(0, leftIndex.children.remove(leftIndex.children.size() - 1));
-				// Move rightmost key from left node to parent
-				parent.keys.set(parent.keys.size()-1, leftIndex.keys.remove(leftIndex.keys.size() - 1));
-			}	
+				newParentIndex = allKeys.size()/2;
+			}
+			
+			// Add the new parent key to the splitting index.
+			// Add all keys left of the new parent key into the leftIndex
+			// Add all keys right of the new parent key into the rightIndex
+			leftIndex.keys.clear();
+			leftIndex.keys.addAll(allKeys.subList(0, newParentIndex + 1));
+			parent.keys.set(splittingIndex, allKeys.get(newParentIndex));
+			rightIndex.keys.clear();
+			rightIndex.keys.addAll(allKeys.subList(newParentIndex + 1, allKeys.size()));
+			
+			// Add all the (n+1) children from 0 to n+1 to the left node
+			// Add the rest of the children to the right index node
+			leftIndex.children.clear();
+			leftIndex.children.addAll(allChildren.subList(0, newParentIndex + 2));
+			rightIndex.children.clear();
+			rightIndex.children.addAll(allChildren.subList(newParentIndex + 2, allChildren.size()));
+				
+			// TODO: DELETE THIS CODE IT IS SPECIFIC TO D=2
+//			if (leftIndex.isUnderflowed()) {
+//				// Move splitting key to left node
+//				leftIndex.keys.add(parent.keys.get(splittingIndex));
+//				// Move leftmost key from right node to parent
+//				parent.keys.set(splittingIndex, rightIndex.keys.remove(0));
+//				// Move leftmost child of right to left's children
+//				leftIndex.children.add(rightIndex.children.remove(0));
+//			} else {
+//				// Move splitting key to right node
+//				rightIndex.keys.add(0, parent.keys.get(splittingIndex));
+//				// Move last child of left node to right's node
+//				rightIndex.children.add(0, leftIndex.children.remove(leftIndex.children.size() - 1));
+//				// Move rightmost key from left node to parent
+//				parent.keys.set(parent.keys.size()-1, leftIndex.keys.remove(leftIndex.keys.size() - 1));
+//			}	
 			return -1;
 			
 		} else {
