@@ -7,6 +7,42 @@ import org.junit.Test;
 
 public class Tests {
 	
+	@Test
+	public void testDeleteMultipleLeafUnderflowToRoot() {
+		System.out.println("\n testSimpleHybrid");
+		Character alphabet[] = new Character[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g' };
+		String alphabetStrings[] = new String[alphabet.length];
+		for (int i = 0; i < alphabet.length; i++) {
+			alphabetStrings[i] = (alphabet[i]).toString();
+		}
+		BPlusTree<Character, String> tree = new BPlusTree<Character, String>();
+		Utils.bulkInsert(tree, alphabet, alphabetStrings);
+		String test = Utils.outputTree(tree);
+		String correct = "@c/e/@%%[(a,a);(b,b);]#[(c,c);(d,d);]#[(e,e);(f,f);(g,g);]$%%";
+		assertEquals(correct, test);
+
+		//Testing Leaf Underflow which causes leaf merging
+		tree.delete('a');
+		test = Utils.outputTree(tree);
+		correct = "@e/@%%[(b,b);(c,c);(d,d);]#[(e,e);(f,f);(g,g);]$%%";
+		assertEquals(correct, test);
+		
+		//Testing leaf underflow with merging
+		tree.delete('b');
+		tree.delete('c');
+		test = Utils.outputTree(tree);
+		correct = "@f/@%%[(d,d);(e,e);]#[(f,f);(g,g);]$%%";
+		assertEquals(correct, test);
+		
+		tree.delete('d');
+		test = Utils.outputTree(tree);
+		correct = "[(e,e);(f,f);(g,g);]$%%";
+		assertEquals(correct, test);
+		
+		//Checking if the root has been made a leaf node
+		assertEquals(true, tree.root.isLeafNode);
+	}
+	
 	// add some nodes, see if it comes out right, delete one, see if it's right
 	@Test
 	public void testSimpleHybrid() {
