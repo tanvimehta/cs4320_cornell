@@ -13,7 +13,7 @@ import java.util.Map.Entry;
 public class BPlusTree<K extends Comparable<K>, T> {
 
 	public Node<K,T> root;
-	public static final int D = 2;
+	public static final int D = 3;
 
 	/**
 	 * Search the value for a specific key
@@ -360,13 +360,6 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			right.keys.addAll(allKeys.subList(newLeftSize, allKeys.size()));
 			right.values.addAll(allValues.subList(newLeftSize, allValues.size()));
 			
-			// LOGIC FOR D=2
-//			// Either node could be underflow
-//			if (left.isUnderflowed()) {
-//				left.insertSorted(right.keys.remove(0), right.values.remove(0));
-//			} else {
-//				right.insertSorted(left.keys.remove(left.keys.size()-1), left.values.remove(left.values.size()-1));
-//			}
 			parent.keys.set(childIndex - 1, parent.children.get(childIndex).keys.get(0));
 			return -1;
 		} 
@@ -444,24 +437,8 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			leftIndex.children.clear();
 			leftIndex.children.addAll(allChildren.subList(0, newParentIndex + 1));
 			rightIndex.children.clear();
-			rightIndex.children.addAll(allChildren.subList(newParentIndex + 2, allChildren.size()));
-				
-			// TODO: DELETE THIS CODE IT IS SPECIFIC TO D=2
-//			if (leftIndex.isUnderflowed()) {
-//				// Move splitting key to left node
-//				leftIndex.keys.add(parent.keys.get(splittingIndex));
-//				// Move leftmost key from right node to parent
-//				parent.keys.set(splittingIndex, rightIndex.keys.remove(0));
-//				// Move leftmost child of right to left's children
-//				leftIndex.children.add(rightIndex.children.remove(0));
-//			} else {
-//				// Move splitting key to right node
-//				rightIndex.keys.add(0, parent.keys.get(splittingIndex));
-//				// Move last child of left node to right's node
-//				rightIndex.children.add(0, leftIndex.children.remove(leftIndex.children.size() - 1));
-//				// Move rightmost key from left node to parent
-//				parent.keys.set(parent.keys.size()-1, leftIndex.keys.remove(leftIndex.keys.size() - 1));
-//			}	
+			rightIndex.children.addAll(allChildren.subList(newParentIndex + 1, allChildren.size()));
+	
 			return -1;
 			
 		} else {
