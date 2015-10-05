@@ -6,30 +6,6 @@ import java.util.Collections;
 import org.junit.Test;
 
 public class Tests {
-
-	@Test
-	public void testSearch() {
-		System.out.println("\n testSearch");
-		Character alphabet[] = new Character[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g' };
-		String alphabetStrings[] = new String[alphabet.length];
-		for (int i = 0; i < alphabet.length; i++) {
-			alphabetStrings[i] = (alphabet[i]).toString();
-		}
-		BPlusTree<Character, String> tree = new BPlusTree<Character, String>();
-		Utils.bulkInsert(tree, alphabet, alphabetStrings);
-
-		String test = Utils.outputTree(tree);
-		String correct = "@c/e/@%%[(a,a);(b,b);]#[(c,c);(d,d);]#[(e,e);(f,f);(g,g);]$%%";
-
-		assertEquals(correct, test);
-
-		tree.delete('a');
-
-		test = Utils.outputTree(tree);
-		correct = "@e/@%%[(b,b);(c,c);(d,d);]#[(e,e);(f,f);(g,g);]$%%";
-		assertEquals(correct, test);
-
-	}
 	
 	// add some nodes, see if it comes out right, delete one, see if it's right
 	@Test
