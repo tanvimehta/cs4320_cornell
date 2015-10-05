@@ -7,6 +7,30 @@ import org.junit.Test;
 
 public class Tests {
 
+	@Test
+	public void testSearch() {
+		System.out.println("\n testSearch");
+		Character alphabet[] = new Character[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g' };
+		String alphabetStrings[] = new String[alphabet.length];
+		for (int i = 0; i < alphabet.length; i++) {
+			alphabetStrings[i] = (alphabet[i]).toString();
+		}
+		BPlusTree<Character, String> tree = new BPlusTree<Character, String>();
+		Utils.bulkInsert(tree, alphabet, alphabetStrings);
+
+		String test = Utils.outputTree(tree);
+		String correct = "@c/e/@%%[(a,a);(b,b);]#[(c,c);(d,d);]#[(e,e);(f,f);(g,g);]$%%";
+
+		assertEquals(correct, test);
+
+		tree.delete('a');
+
+		test = Utils.outputTree(tree);
+		correct = "@e/@%%[(b,b);(c,c);(d,d);]#[(e,e);(f,f);(g,g);]$%%";
+		assertEquals(correct, test);
+
+	}
+	
 	// add some nodes, see if it comes out right, delete one, see if it's right
 	@Test
 	public void testSimpleHybrid() {
@@ -55,6 +79,28 @@ public class Tests {
 		assertEquals(test, correct);
 	}
 
+	@Test
+	public void testIndexRedistribute() {
+		Integer primeNumbers[] = new Integer[] { 2, 4, 5, 7, 8, 9, 10, 11, 12,
+				13, 14, 15, 16 };
+		String primeNumberStrings[] = new String[primeNumbers.length];
+		for (int i = 0; i < primeNumbers.length; i++) {
+			primeNumberStrings[i] = (primeNumbers[i]).toString();
+		}
+		BPlusTree<Integer, String> tree = new BPlusTree<Integer, String>();
+		Utils.bulkInsert(tree, primeNumbers, primeNumberStrings);
+
+		String test = Utils.outputTree(tree);
+		String correct = "@10/@%%@5/8/@@12/14/@%%[(2,2);(4,4);]#[(5,5);(7,7);]#[(8,8);(9,9);]$[(10,10);(11,11);]#[(12,12);(13,13);]#[(14,14);(15,15);(16,16);]$%%";
+		assertEquals(test, correct);
+
+		tree.delete(5);
+		test = Utils.outputTree(tree);
+		Utils.printTree(tree);
+		correct = "@8/10/12/14/@%%[(2,2);(4,4);(7,7);]#[(8,8);(9,9);]#[(10,10);(11,11);]#[(12,12);(13,13);]#[(14,14);(15,15);(16,16);]$%%";
+		assertEquals(test, correct);
+	}
+	
 	@Test
 	public void testBookExampleShort() {
 		Integer exampleNumbers[] = new Integer[] { 2, 3, 13, 14, 17, 19, 24, 27,

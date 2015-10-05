@@ -334,13 +334,39 @@ public class BPlusTree<K extends Comparable<K>, T> {
 		
 		// If redistribute is possible 
 		if ((left.keys.size() + right.keys.size()) >= (2*D)) {
+			
 			int childIndex = parent.children.indexOf(right);
-			// Either node could be underflow
-			if (left.isUnderflowed()) {
-				left.insertSorted(right.keys.remove(0), right.values.remove(0));
-			} else {
-				right.insertSorted(left.keys.remove(left.keys.size()-1), left.values.remove(left.values.size()-1));
-			}
+			
+			// Store all keys and all values from left and right nodes
+			List<K> allKeys = new ArrayList<K>();
+			allKeys.addAll(left.keys);
+			allKeys.addAll(right.keys);
+			List<T> allValues = new ArrayList<T>();
+			allValues.addAll(left.values);
+			allValues.addAll(right.values);
+			
+			// New size of left would be half of the total keys in left and right
+			int newLeftSize = (left.keys.size() + right.keys.size())/2;
+			
+			// Clear all keys and values from left and right nodes
+			left.keys.clear();
+			right.keys.clear();
+			left.values.clear();
+			right.values.clear();
+			
+			// Add first half keys and values into left and rest into right
+			left.keys.addAll(allKeys.subList(0, newLeftSize));
+			left.values.addAll(allValues.subList(0, newLeftSize));
+			right.keys.addAll(allKeys.subList(newLeftSize, allKeys.size()));
+			right.values.addAll(allValues.subList(newLeftSize, allValues.size()));
+			
+			// LOGIC FOR D=2
+//			// Either node could be underflow
+//			if (left.isUnderflowed()) {
+//				left.insertSorted(right.keys.remove(0), right.values.remove(0));
+//			} else {
+//				right.insertSorted(left.keys.remove(left.keys.size()-1), left.values.remove(left.values.size()-1));
+//			}
 			parent.keys.set(childIndex - 1, parent.children.get(childIndex).keys.get(0));
 			return -1;
 		} 
@@ -384,12 +410,18 @@ public class BPlusTree<K extends Comparable<K>, T> {
 		// Redistribute if possible
 		if ((leftIndex.keys.size() + rightIndex.keys.size()) >= (2*D)) {
 			if (leftIndex.isUnderflowed()) {
+				// Move splitting key to left node
 				leftIndex.keys.add(parent.keys.get(splittingIndex));
+				// Move leftmost key from right node to parent
 				parent.keys.set(splittingIndex, rightIndex.keys.remove(0));
+				// Move leftmost child of right to left's children
 				leftIndex.children.add(rightIndex.children.remove(0));
 			} else {
+				// Move splitting key to right node
 				rightIndex.keys.add(0, parent.keys.get(splittingIndex));
+				// Move last child of left node to right's node
 				rightIndex.children.add(0, leftIndex.children.remove(leftIndex.children.size() - 1));
+				// Move rightmost key from left node to parent
 				parent.keys.set(parent.keys.size()-1, leftIndex.keys.remove(leftIndex.keys.size() - 1));
 			}	
 			return -1;
