@@ -78,6 +78,36 @@ public class Tests {
 	}
 	
 	@Test
+	public void insertConditionSimpleIndexRedistribute() {
+		Integer numbers[] = new Integer[] { 1,3,7,10,11,13,14,15,18,16,19,24,25,26,21,4,5,20,22,2,17,12,6};
+		String numbersStrings[] = new String[numbers.length];
+		for (int i = 0; i < numbers.length; i++) {
+			numbersStrings[i] = (numbers[i]).toString();
+		}
+		BPlusTree<Integer, String> tree = new BPlusTree<Integer, String>();
+		Utils.bulkInsert(tree, numbers, numbersStrings);
+
+		String test = Utils.outputTree(tree);
+		String correct = "@14/@%%@3/7/11/@@16/19/24/@%%[(1,1);(2,2);]#[(3,3);(4,4);(5,5);(6,6);]#[(7,7);(10,10);]#[(11,11);(12,12);(13,13);]$[(14,14);(15,15);]#[(16,16);(17,17);(18,18);]#[(19,19);(20,20);(21,21);(22,22);]#[(24,24);(25,25);(26,26);]$%%";
+		assertEquals(test, correct);		
+	}
+	
+	@Test
+	public void insertConditionIndexRedistribute() {
+		Integer numbers[] = new Integer[] { 1,3,7,10,11,13,14,15,18,16,19,24,25,26,21,4,5,20,22,2,17,12,6,29,40,35,38};
+		String numbersStrings[] = new String[numbers.length];
+		for (int i = 0; i < numbers.length; i++) {
+			numbersStrings[i] = (numbers[i]).toString();
+		}
+		BPlusTree<Integer, String> tree = new BPlusTree<Integer, String>();
+		Utils.bulkInsert(tree, numbers, numbersStrings);
+
+		String test = Utils.outputTree(tree);
+		String correct = "@14/24/@%%@3/7/11/@@16/19/@@26/35/@%%[(1,1);(2,2);]#[(3,3);(4,4);(5,5);(6,6);]#[(7,7);(10,10);]#[(11,11);(12,12);(13,13);]$[(14,14);(15,15);]#[(16,16);(17,17);(18,18);]#[(19,19);(20,20);(21,21);(22,22);]$[(24,24);(25,25);]#[(26,26);(29,29);]#[(35,35);(38,38);(40,40);]$%%";
+		assertEquals(test, correct);		
+	}
+	
+	@Test
 	public void testBookExampleShort() {
 		Integer exampleNumbers[] = new Integer[] { 2, 3, 13, 14, 17, 19, 24, 27,
 				30, 33, 34, 38, 5, 7, 16, 20, 22, 29 };
