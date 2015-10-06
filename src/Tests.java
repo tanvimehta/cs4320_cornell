@@ -29,6 +29,7 @@ public class Tests {
 		tree.delete('f');
 		tree.delete('g');
 		assertEquals(null, tree.root);
+		
 	}
 	
 	@Test

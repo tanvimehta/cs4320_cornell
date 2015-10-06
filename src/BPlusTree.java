@@ -367,7 +367,12 @@ public class BPlusTree<K extends Comparable<K>, T> {
 		else {
 			left.keys.addAll(right.keys);
 			left.values.addAll(right.values);
+			
 			left.nextLeaf = right.nextLeaf;
+			
+			if (right.nextLeaf != null) {
+				right.nextLeaf.previousLeaf = left;
+			}
 			
 			int index = parent.children.indexOf(right) - 1;
 			parent.children.remove(right);
