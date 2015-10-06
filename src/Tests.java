@@ -168,6 +168,99 @@ public class Tests {
 	}
 	
 	@Test
+	public void deleteConditionLeftsibling() {
+		Integer numbers[] = new Integer[] { 1,3,7,10,11,13,14,15,18,16,19,24,25,26,21,4,5,20,22,2,17,12,6,29,40,35,38};
+		String numbersStrings[] = new String[numbers.length];
+		for (int i = 0; i < numbers.length; i++) {
+			numbersStrings[i] = (numbers[i]).toString();
+		}
+		BPlusTree<Integer, String> tree = new BPlusTree<Integer, String>();
+		Utils.bulkInsert(tree, numbers, numbersStrings);
+
+		String test = Utils.outputTree(tree);
+		String correct = "@14/24/@%%@3/7/11/@@16/19/@@26/35/@%%[(1,1);(2,2);]#[(3,3);(4,4);(5,5);(6,6);]#[(7,7);(10,10);]#[(11,11);(12,12);(13,13);]$[(14,14);(15,15);]#[(16,16);(17,17);(18,18);]#[(19,19);(20,20);(21,21);(22,22);]$[(24,24);(25,25);]#[(26,26);(29,29);]#[(35,35);(38,38);(40,40);]$%%";
+		assertEquals(test, correct);
+		tree.delete(2);
+		test = Utils.outputTree(tree);
+		correct = "@14/24/@%%@4/7/11/@@16/19/@@26/35/@%%[(1,1);(3,3);]#[(4,4);(5,5);(6,6);]#[(7,7);(10,10);]#[(11,11);(12,12);(13,13);]$[(14,14);(15,15);]#[(16,16);(17,17);(18,18);]#[(19,19);(20,20);(21,21);(22,22);]$[(24,24);(25,25);]#[(26,26);(29,29);]#[(35,35);(38,38);(40,40);]$%%";
+		assertEquals(test, correct);
+		//tree.delete(22);
+		tree.delete(24);
+		test = Utils.outputTree(tree);
+		correct = "@14/@%%@4/7/11/@@16/19/24/35/@%%[(1,1);(3,3);]#[(4,4);(5,5);(6,6);]#[(7,7);(10,10);]#[(11,11);(12,12);(13,13);]$[(14,14);(15,15);]#[(16,16);(17,17);(18,18);]#[(19,19);(20,20);(21,21);(22,22);]#[(25,25);(26,26);(29,29);]#[(35,35);(38,38);(40,40);]$%%";
+		assertEquals(test, correct);
+		
+	}
+	
+	@Test
+	public void deleteConditionRightsibling() {
+		Integer numbers[] = new Integer[] { 1,3,7,10,11,13,14,15,18,16,19,24,25,26,21,4,5,20,22,2,17,12,6,29,40,35,38};
+		String numbersStrings[] = new String[numbers.length];
+		for (int i = 0; i < numbers.length; i++) {
+			numbersStrings[i] = (numbers[i]).toString();
+		}
+		BPlusTree<Integer, String> tree = new BPlusTree<Integer, String>();
+		Utils.bulkInsert(tree, numbers, numbersStrings);
+
+		String test = Utils.outputTree(tree);
+		String correct = "@14/24/@%%@3/7/11/@@16/19/@@26/35/@%%[(1,1);(2,2);]#[(3,3);(4,4);(5,5);(6,6);]#[(7,7);(10,10);]#[(11,11);(12,12);(13,13);]$[(14,14);(15,15);]#[(16,16);(17,17);(18,18);]#[(19,19);(20,20);(21,21);(22,22);]$[(24,24);(25,25);]#[(26,26);(29,29);]#[(35,35);(38,38);(40,40);]$%%";
+		assertEquals(test, correct);
+		tree.delete(2);
+		test = Utils.outputTree(tree);
+		correct = "@14/24/@%%@4/7/11/@@16/19/@@26/35/@%%[(1,1);(3,3);]#[(4,4);(5,5);(6,6);]#[(7,7);(10,10);]#[(11,11);(12,12);(13,13);]$[(14,14);(15,15);]#[(16,16);(17,17);(18,18);]#[(19,19);(20,20);(21,21);(22,22);]$[(24,24);(25,25);]#[(26,26);(29,29);]#[(35,35);(38,38);(40,40);]$%%";
+		assertEquals(test, correct);
+		//tree.delete(22);
+		tree.delete(26);
+		tree.insert(30, "30");
+		tree.insert(31, "31");
+		test = Utils.outputTree(tree);
+		correct = "@14/24/@%%@4/7/11/@@16/19/@@29/35/@%%[(1,1);(3,3);]#[(4,4);(5,5);(6,6);]#[(7,7);(10,10);]#[(11,11);(12,12);(13,13);]$[(14,14);(15,15);]#[(16,16);(17,17);(18,18);]#[(19,19);(20,20);(21,21);(22,22);]$[(24,24);(25,25);]#[(29,29);(30,30);(31,31);]#[(35,35);(38,38);(40,40);]$%%";
+		assertEquals(test, correct);		
+	}
+	
+	@Test
+	public void simpleDeleteConditionRightsibling() {
+		Integer numbers[] = new Integer[] { 1,3,7,10,11,13,14,15,18,16,19,24,25,26,21,4,5,20,22,2,17,12,6,29,40,35,38};
+		String numbersStrings[] = new String[numbers.length];
+		for (int i = 0; i < numbers.length; i++) {
+			numbersStrings[i] = (numbers[i]).toString();
+		}
+		BPlusTree<Integer, String> tree = new BPlusTree<Integer, String>();
+		Utils.bulkInsert(tree, numbers, numbersStrings);
+
+		String test = Utils.outputTree(tree);
+		String correct = "@14/24/@%%@3/7/11/@@16/19/@@26/35/@%%[(1,1);(2,2);]#[(3,3);(4,4);(5,5);(6,6);]#[(7,7);(10,10);]#[(11,11);(12,12);(13,13);]$[(14,14);(15,15);]#[(16,16);(17,17);(18,18);]#[(19,19);(20,20);(21,21);(22,22);]$[(24,24);(25,25);]#[(26,26);(29,29);]#[(35,35);(38,38);(40,40);]$%%";
+		assertEquals(test, correct);
+		tree.delete(2);
+		test = Utils.outputTree(tree);
+		correct = "@14/24/@%%@4/7/11/@@16/19/@@26/35/@%%[(1,1);(3,3);]#[(4,4);(5,5);(6,6);]#[(7,7);(10,10);]#[(11,11);(12,12);(13,13);]$[(14,14);(15,15);]#[(16,16);(17,17);(18,18);]#[(19,19);(20,20);(21,21);(22,22);]$[(24,24);(25,25);]#[(26,26);(29,29);]#[(35,35);(38,38);(40,40);]$%%";
+		assertEquals(test, correct);
+		tree.delete(22);
+		tree.delete(29);
+		tree.insert(30, "30");
+		tree.insert(31, "31");
+		test = Utils.outputTree(tree);
+		correct = "@14/24/@%%@4/7/11/@@16/19/@@26/35/@%%[(1,1);(3,3);]#[(4,4);(5,5);(6,6);]#[(7,7);(10,10);]#[(11,11);(12,12);(13,13);]$[(14,14);(15,15);]#[(16,16);(17,17);(18,18);]#[(19,19);(20,20);(21,21);]$[(24,24);(25,25);]#[(26,26);(30,30);(31,31);]#[(35,35);(38,38);(40,40);]$%%";
+		assertEquals(test, correct);		
+	}
+	
+	
+	@Test
+	public void searchTest() {
+		Integer numbers[] = new Integer[] { 1,3,7,10,11,13,14,15,18,16,19,24,25,26,21,4,5,20,22,2,17,12,6,29,40,35,38};
+		String numbersStrings[] = new String[numbers.length];
+		for (int i = 0; i < numbers.length; i++) {
+			numbersStrings[i] = (numbers[i]).toString();
+		}
+		BPlusTree<Integer, String> tree = new BPlusTree<Integer, String>();
+		Utils.bulkInsert(tree, numbers, numbersStrings);
+		assertEquals(("24"), tree.search(24));	
+		assertEquals(("40"), tree.search(40));
+		assertEquals(("7"), tree.search(7));
+		assertEquals((null), tree.search(100));
+	}
+	
+	@Test
 	public void testBookExampleShort() {
 		Integer exampleNumbers[] = new Integer[] { 2, 3, 13, 14, 17, 19, 24, 27,
 				30, 33, 34, 38, 5, 7, 16, 20, 22, 29 };
@@ -205,7 +298,6 @@ public class Tests {
 		tree.delete(8);
 		String test = Utils.outputTree(tree);
 		Utils.printTree(tree);
-
 		String result = "@4/@%%[(2,2);(3,3);]#[(4,4);(5,5);]$%%";
 		assertEquals(result, test);
 	}
