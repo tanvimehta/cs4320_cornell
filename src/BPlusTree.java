@@ -98,11 +98,14 @@ public class BPlusTree<K extends Comparable<K>, T> {
         if (overflow != null && root instanceof IndexNode) {
 
             IndexNode<K, T> indexNode = (IndexNode<K, T>) root;
+            // If overflow key is less than 1st key in index node, traverse left
             if (overflow.getKey().compareTo(indexNode.keys.get(0)) < 0) {
                 indexNode.insertSorted(overflow, 0);
+            // If overflow key is more then the last key in index node, traverse left
             } else if (overflow.getKey().compareTo(indexNode.keys.get(indexNode.keys.size() - 1)) > 0) {
                 indexNode.insertSorted(overflow, indexNode.keys.size());
             } else {
+            	// Insert overflow key in the correct position
                 ListIterator<K> iterator = indexNode.keys.listIterator();
                 while (iterator.hasNext()) {
                     if (iterator.next().compareTo(overflow.getKey()) > 0) {
@@ -132,6 +135,9 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 */
 	public Entry<K, Node<K,T>> splitLeafNode(LeafNode<K,T> leaf) {
 
+        // Splitting key is the first key in new right node
+        K splittingKey = (K)leaf.keys.get(D);
+        
         // Keys after first D keys in new right node
         List<K> rightKeys = new ArrayList<K>();
         rightKeys.addAll(leaf.keys.subList(D, leaf.keys.size()));
@@ -154,9 +160,6 @@ public class BPlusTree<K extends Comparable<K>, T> {
 
         leaf.nextLeaf = right;
 
-        // Splitting key is the first key in new right node
-        K splittingKey = (K)right.keys.get(0);
-
         // Found this here: http://stackoverflow.com/questions/3110547/java-how-to-create-new-entry-key-value
 		return new AbstractMap.SimpleEntry<K, Node<K,T>>(splittingKey, right);
 	}
@@ -170,6 +173,10 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	 */
 	public Entry<K, Node<K,T>> splitIndexNode(IndexNode<K,T> index) {
 
+        // Splitting key is the Dth key in new left node
+        // Do this before removing the trailing keys
+        K splittingKey = (K)index.keys.get(D);
+        
         // D+1th to last key in new right node
         List<K> rightKeys = new ArrayList<K>();
         rightKeys.addAll(index.keys.subList(D + 1, index.keys.size()));
@@ -179,10 +186,6 @@ public class BPlusTree<K extends Comparable<K>, T> {
         rightChildren.addAll(index.children.subList(D + 1, index.children.size()));
 
         IndexNode<K, T> right = new IndexNode<K, T>(rightKeys, rightChildren);
-
-        // Splitting key is the Dth key in new left node
-        // Do this before removing the trailing keys
-        K splittingKey = (K)index.keys.get(D);
 
         // Remove all keys and children after Dth entry
         index.keys.subList(D, index.keys.size()).clear();
@@ -203,6 +206,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 			splitIndex = deleteHelper(key, root, null, splitIndex);
 		}
 		
+		// If splitting bubbles up to the root, handle it here
 		if (splitIndex != -1) {
 			root.keys.remove(splitIndex);
 			if (root.keys.size() == 0) {
