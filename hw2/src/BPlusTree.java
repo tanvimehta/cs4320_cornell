@@ -13,7 +13,7 @@ import java.util.Map.Entry;
 public class BPlusTree<K extends Comparable<K>, T> {
 
 	public Node<K,T> root;
-	public static final int D = 1;
+	public static final int D = 2;
 
 	/**
 	 * Search the value for a specific key
@@ -24,7 +24,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
 	public T search(K key) {
 
         LeafNode<K, T> leaf = searchLeafNode(root, key);
-        return (T)leaf.searchValueByKey(key);
+        return (T)leaf.getValueByKey(key);
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
             }
         }
 
-        return handleLeafOverflow(root, overflow);
+        return addOverflowToIndex(root, overflow);
     }
 
     /**
@@ -93,7 +93,7 @@ public class BPlusTree<K extends Comparable<K>, T> {
      * @param overflow
      * @return
      */
-    public Entry<K, Node<K,T>> handleLeafOverflow (Node<K, T> root, Entry<K, Node<K,T>> overflow) {
+    public Entry<K, Node<K,T>> addOverflowToIndex (Node<K, T> root, Entry<K, Node<K,T>> overflow) {
 
         if (overflow != null && root instanceof IndexNode) {
 

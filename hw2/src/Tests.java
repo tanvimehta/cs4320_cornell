@@ -8,7 +8,7 @@ import java.util.Collections;
 import org.junit.Test;
 
 
-public class TestsS {
+public class Tests {
 	// add some nodes, see if it comes out right, delete one, see if it's right
 	@Test
 	public void testSimpleHybrid() {
@@ -275,10 +275,11 @@ public class TestsS {
 		Utils.bulkInsert(tree, numbers, primeNumberStrings);
 		
 		System.out.println(Utils.outputTree(tree));
+		System.out.println("Delete 20:");
 		tree.delete(20);
 		
 		System.out.println(Utils.outputTree(tree));
-		String expected = "@120/160/@%%@80/100/@@131/133/140/@@180/200/220/@%%[(40,40);(50,50);(70,70);]#[(80,80);(90,90);]#[(100,100);(110,110);]$[(120,120);(130,130);]#[(131,131);(132,132);]#[(133,133);(134,134);(135,135);]#[(140,140);(150,150);]$[(160,160);(170,170);]#[(180,180);(190,190);]#[(200,200);(210,210);]#[(220,220);(230,230);(240,240);(250,250);]$%%";
+		String expected="@120/160/@%%@80/100/@@131/133/140/@@180/200/220/@%%[(40,40);(50,50);(70,70);]#[(80,80);(90,90);]#[(100,100);(110,110);]$[(120,120);(130,130);]#[(131,131);(132,132);]#[(133,133);(134,134);(135,135);]#[(140,140);(150,150);]$[(160,160);(170,170);]#[(180,180);(190,190);]#[(200,200);(210,210);]#[(220,220);(230,230);(240,240);(250,250);]$%%";
 		assertEquals(expected, Utils.outputTree(tree));
 	}
 	
