@@ -10,6 +10,10 @@ public class AttributeSet {
 	//a list of the backing attributes
 	private final List<Attribute> _attributes;
 
+	public List<Attribute> get_attributes() {
+		return _attributes;
+	}
+
 	//construct an empty AttributeSet
 	public AttributeSet() {
 		_attributes = new ArrayList<>();
@@ -37,8 +41,10 @@ public class AttributeSet {
 		if(other == null || !(other instanceof AttributeSet)){
 			return false;
 		}
-		//TODO: you should probably implement this
-		return this == other;
+		
+		AttributeSet otherSet = (AttributeSet)other;
+		return this.get_attributes().containsAll(otherSet.get_attributes()) && 
+				otherSet.get_attributes().containsAll(this.get_attributes());
 	}
 
 	public Iterator<Attribute> iterator() {
@@ -52,5 +58,13 @@ public class AttributeSet {
 			out += iter.next() + "\t";
 
 		return out;
+	}
+	
+	public AttributeSet(List<Attribute> other) {
+		_attributes = other;
+	}
+	
+	public void bulkAddAttribute(AttributeSet more) {
+		this._attributes.addAll(more.get_attributes());
 	}
 }
