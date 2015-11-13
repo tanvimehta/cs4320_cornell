@@ -1,5 +1,11 @@
 import java.util.*;
 
+/**
+ * BCNF Decomposition Algorithm
+ * Tanvi Mehta, Sahana Vijaykumar, Vini Gupta
+ * @author tmm259, sv387, vg248
+ *
+ */
 public class BCNF {
 
   /**
@@ -8,9 +14,20 @@ public class BCNF {
   public static Set<AttributeSet> decompose(AttributeSet attributeSet,
                                             Set<FunctionalDependency> functionalDependencies) {
 	  
-	  Set<AttributeSet> bcnf = new HashSet<AttributeSet>();
+	  Set<AttributeSet> bcnf = new TreeSet<AttributeSet>(new Comparator<AttributeSet>() {
+          @Override
+          public int compare(AttributeSet o1, AttributeSet o2) {
+              if(o1.size() > o2.size()) {
+                  return 1;
+              } else {
+                  return -1;
+              }
+          }
+      });
+	  
 	  Set<AttributeSet> powerSet = getAllSubsets(attributeSet, 0);
 	  
+	  // Iterate through each subset of the attribute power set
 	  for (AttributeSet subset: powerSet) {
 		AttributeSet closure = closure(subset, functionalDependencies);
 		
@@ -18,6 +35,7 @@ public class BCNF {
 		// include attributes not in the relation
 		AttributeSet cleanClosure = new AttributeSet();
 		for (Attribute attr: closure.get_attributes()) {
+			// If attribute is not a part of the relation. remove it from the closure
 			if (attributeSet.contains(attr)) {
 				cleanClosure.addAttribute(attr);
 			}
@@ -118,7 +136,7 @@ public class BCNF {
   
   /**
    * Computes the power set of the attribute set.
-   * Used treeset http://stackoverflow.com/questions/3380312/ordering-a-hashset-example
+   * Used tree set http://stackoverflow.com/questions/3380312/ordering-a-hashset-example
    * @param attrSet attribute set
    * @param index of the current attribute
    * @return all possible subsets of the attribute set
