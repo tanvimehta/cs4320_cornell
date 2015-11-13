@@ -23,10 +23,10 @@ public class Point {
      */
     public Point(int dim)
     {
-	this.dim = dim;
+    	this.dim = dim;
         for(int i = 0; i < dim; i++) {
-		pointDims.add(new Integer(0));
-	}
+        	pointDims.add(new Integer(0));
+        }
     }
 
     /**
@@ -38,11 +38,12 @@ public class Point {
      */
     public Point(String str)
     {
-	String[] values = str.split(" ");
+    	String[] values = str.split(" ");
         dim = values.length;
-	for (String value: values) {
-		pointDims.add(Integer.parseInt(value));
-	}
+        
+		for (String value: values) {
+			pointDims.add(Integer.parseInt(value));
+		}
     }
 
     /**
@@ -51,16 +52,23 @@ public class Point {
     public Point(Point other)
     {
         dim = other.getDimension();
-	pointDims.addAll(other.getPointDims);
+        pointDims.addAll(other.getPointDims);
     }
 
     /**
      * @return The point dims of the point.
      */
     public ArrayList<Integer> getPointDims() {
-	return pointDims;
+    	return pointDims;
     }
 
+    /**
+     * Setter for pointDims
+     */
+    public void setPointsDims(ArrayList<Integer> pointDims) {
+    	this.pointDims.addAll(pointDims);
+    }
+    
     /**
      * @return The dimension of the point.  For example, the point [x=0, y=1] has
      * a dimension of 2.
@@ -77,13 +85,12 @@ public class Point {
      * Given a point with coordinates {x=1, y=1, z=3}
      * Return the string "1 1 3"
      */
-    public String toString()
-    {
+    public String toString() {
         String result = "";
-	for (Integer value: pointDims) {
-		result += value + " ";
-	}
-	return result.substring(0, result.length-1);
+        for (Integer value: pointDims) {
+        	result += value + " ";
+        }
+        return result.substring(0, result.length-1);
     }
 
     /**
@@ -95,18 +102,18 @@ public class Point {
     public int compareTo(Point o)
     {   
         if (dim != other.getDimension) {
-		System.err.println("Points have different dimensions.");
-	System.exit(1);
-	}
+        	System.err.println("Points have different dimensions.");
+        	System.exit(1);
+        }
 
-	for (int i = 0; i < dim; i++) {
-		int diff = pointDims.get(i) - other.pointDims.get(i);
-		if (diff > 0 ) {
-			return 1;
-		} else if (diff < 0) {
-			return -1;
+		for (int i = 0; i < dim; i++) {
+			int diff = pointDims.get(i) - other.pointDims.get(i);
+			if (diff > 0 ) {
+				return 1;
+			} else if (diff < 0) {
+				return -1;
+			}
 		}
-	}
         return 0;
     }
 
@@ -115,19 +122,19 @@ public class Point {
      */
     public static final float distance(Point x, Point y)
     {
-	if (x.getDimension() != y.getDimension()) {
-		System.err.println("Points have different dimensions.");
-		System.exit(1);
-	}
+		if (x.getDimension() != y.getDimension()) {
+			System.err.println("Points have different dimensions.");
+			System.exit(1);
+		}
+		
+		double squaredDistance = 0.0;
+		ArrayList<Integer> pointDims_x = x.getPointDims();
+		ArrayList<Integer> pointDims_y = y.getPointDims();
 	
-	double squaredDistance = 0.0;
-	ArrayList<Integer> pointDims_x = x.getPointDims();
-	ArrayList<Integer> pointDims_y = y.getPointDims();
-
-	for (int i = 0; i < x.getDimension(); i++) {
-		double diff = Math.abs(pointDims_x.get(i) - pointDims_y.get(i));
-		squaredDistance = Math.pow(diff, 2);
-	}
+		for (int i = 0; i < x.getDimension(); i++) {
+			double diff = Math.abs(pointDims_x.get(i) - pointDims_y.get(i));
+			squaredDistance = Math.pow(diff, 2);
+		}
 
         return (float)Math.sqrt(squaredDistance);
     }
@@ -135,17 +142,23 @@ public class Point {
     /**
      * @return A new point equal to [x]+[y]
      */
-    public static final Point addPoints(Point x, Point y)
-    {
+    public static final Point addPoints(Point x, Point y) {
         if (x.getDimension() != y.getDimension()) {
-		System.err.println("Points have different dimensions.");
-		System.exit(1);
-	}
+        	System.err.println("Points have different dimensions.");
+        	System.exit(1);
+        }
 
-	Point result = new Point(x.getDimension());
-	for (int i = 0; i <= x.getDimension(); i++) {
-		result.
-	}
+        Point result = new Point(x.getDimension());
+        ArrayList<Integer> dims = new ArrayList<Integer>();
+		ArrayList<Integer> pointDims_x = x.getPointDims();
+		ArrayList<Integer> pointDims_y = y.getPointDims();
+        
+		for (int i = 0; i <= x.getDimension(); i++) {
+			dims.add(new Integer(pointDims_x.get(i) + pointDims_y.get(i)));
+		}
+		
+		result.setPointsDims(dims);
+		return result;
     }
 
     /**
@@ -153,8 +166,14 @@ public class Point {
      */
     public static final Point multiplyScalar(Point x, float c)
     {
-        System.out.println("TODO");
-        System.exit(1);
-        return null;
+        Point result = new Point(x.getDimension());
+        ArrayList<Integer> dims = new ArrayList<Integer>();
+        
+		for (int i = 0; i <= x.getDimension(); i++) {
+			dims.add(new Integer(pointDims_x.get(i)*c);
+		}
+		
+		result.setPointsDims(dims);
+		return result;
     }
 }
