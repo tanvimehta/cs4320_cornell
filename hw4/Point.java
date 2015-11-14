@@ -17,6 +17,13 @@ public class Point implements WritableComparable<Point> {
     private ArrayList<Float> pointDims = new ArrayList<Float>();
     private int dim;
     
+	public Point() {
+		this.dim = KMeans.dimension;
+		
+		for(int i=0; i<dim; i++) 
+			pointDims.add(new Float(0.0));
+	}
+    
     /**
      * Construct a Point with the given dimensions [dim]. The coordinates should all be 0.
      * For example:
