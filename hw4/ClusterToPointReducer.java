@@ -9,9 +9,9 @@ import java.io.IOException;
  * You can modify this class as you see fit, as long as you correctly update the
  * global centroids.
  */
-public class ClusterToPointReducer extends Reducer<IntWritable, Point, Text, Text> {
+public class ClusterToPointReducer extends Reducer<Integer, ArrayList<Point>, Text, Text> {
 	
-	protected void reduce(IntWritable key, Iterable<Point> values, Context context) 
+	protected void reduce(Integer key, ArrayList<Point> values, Context context) 
 			throws IOException, InterruptedException {
 		
 		int counter = 0;
@@ -26,7 +26,6 @@ public class ClusterToPointReducer extends Reducer<IntWritable, Point, Text, Tex
 		// Take the mean of all points by dividing sum of all points by counter
 		newCentroid = Point.multiplyScalar(newCentroid, (1.0f/(float)counter));
 		
-//		context.write(key, newCentroid);
-		KMeans.centroids.set(key.get(), newCentroid);
+		KMeans.centroids.set(key, newCentroid);
 	}
 }

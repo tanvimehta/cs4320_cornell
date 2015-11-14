@@ -32,7 +32,7 @@ public class UpdateJobRunner
         Job updateJob = new Job(new Configuration(), Integer.toString(jobId));
         updateJob.setJarByClass(KMeans.class);
         updateJob.setMapperClass(PointToClusterMapper.class);
-        updateJob.setMapOutputKeyClass(IntWritable.class);
+        updateJob.setMapOutputKeyClass(Integer.class);
         updateJob.setMapOutputValueClass(Point.class);
         updateJob.setReducerClass(ClusterToPointReducer.class);
         updateJob.setOutputKeyClass(IntWritable.class);
