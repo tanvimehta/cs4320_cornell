@@ -12,7 +12,7 @@ import org.apache.hadoop.io.*; // Writable
  * NOTE: This implementation is NOT complete.  As mentioned above, you need
  * to implement WritableComparable at minimum.  Modify this class as you see fit.
  */
-public class Point {
+public class Point implement WritableComparable<Point> {
 
     private ArrayList<Float> pointDims = new ArrayList<Float>();
     private int dim;
@@ -167,5 +167,25 @@ public class Point {
 		}
 		
 		return result;
+    }
+    
+	@Override
+	public void write(DataOutput out) throws IOException {
+		
+		int dim = getDimension();
+		out.writeInt(dim);
+		for (int i=0; i < dim; i++) {
+			out.writeFloat(pointDims.get(i));
+		}
+	} 
+        
+    @Override
+    public void readFields(DataInput in) throws IOException {
+    	int dim = in.readInt();
+    	pointDims = new ArrayList<Float>();
+    	
+    	for (int i = 0; i < dim; i++){
+    		pointDims.add(in.readFloat());
+    	}
     }
 }

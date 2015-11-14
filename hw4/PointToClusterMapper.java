@@ -9,7 +9,7 @@ import java.io.IOException;
  * You can modify this class as you see fit.  You may assume that the global
  * centroids have been correctly initialized.
  */
-public class PointToClusterMapper extends Mapper<Text, Text, Integer, Point> {
+public class PointToClusterMapper extends Mapper<Text, Text, IntWritable, Point> {
 	
 	public void map(Text key, Text value, Context context) 
 			throws IOException, InterruptedException {
