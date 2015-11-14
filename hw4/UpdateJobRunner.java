@@ -14,6 +14,8 @@ import java.util.ArrayList;
 
 public class UpdateJobRunner
 {
+	public ArrayList<Point> C_old = new ArrayList<Point>();
+	
     /**
      * Create a map-reduce job to update the current centroids.
      * @param jobId Some arbitrary number so that Hadoop can create a directory "<outputDirectory>/<jobname>_<jobId>"
@@ -25,11 +27,20 @@ public class UpdateJobRunner
      * @precondition The global centroids variable has been set.
      */
     public static Job createUpdateJob(int jobId, String inputDirectory, String outputDirectory)
-        throws IOException
-    {
-        System.out.println("TODO");
-        System.exit(1);
-        return null;
+        throws IOException {
+        
+    	Job updateJob = new Job(new Configuration(), Integer.toString(jobId));
+    	updateJob.setJarByClass(KMeans.class);
+    	updateJob.setMapperClass(PointToClusterMapper.class);
+    	updateJob.MapOutputKeyClass(IntWritable.class);
+    	updateJob.setMapOutputValueClass(Point.class);
+    	updateJob.setReducerClass(ClusterToPointReducer.class);
+    	updateJob.setOutputKeyClass(IntWritable.class);
+    	update.setOutputValueClass(Point.class);
+        FileInputFormat.addInputPath(updateJob, new Path(inputDirectory));
+        FileOutputFormat.setOutputPath(updateJob, new Path(outputDirectory));
+        updateJob.setInputFormatClass(KeyValueTextInputFormat.class);
+        return updateJob;
     }
 
     /**
@@ -48,10 +59,56 @@ public class UpdateJobRunner
      * @return The number of iterations that were executed.
      */
     public static int runUpdateJobs(int maxIterations, String inputDirectory,
-        String outputDirectory)
-    {
-        System.out.println("TODO");
-        System.exit(1);
-        return 0;
+        String outputDirectory) {
+    	
+    	boolean centroidChangeFlag = true;
+    	addCentroidsToC_old();
+    	int iterations = 0;
+    	
+    	for (iterations = 0; iterations < maxIterations; iterations++) {
+    		if (!centroidChangeFlag) {
+    			break;
+    		}
+    		addCentroidsToC_old();
+    		try {
+    			Job currJob = createUpdateJob(iteration, inputDirectory, outputDirectory);
+    			currJob.waitForCompletion(true);
+    		} catch (Exception e) {
+    			System.out.println("Update job failed at creation.");
+    		}
+    		
+    		centroidChangeFlag = isChangedCentroid();
+    	}
+    	
+    	return iterations;
+    }
+    
+    /**
+     * Add centroids to C_Old
+     */
+    public void addCentroidsToC_old() {
+    	C_old.clear();
+    	for (Point centroid: KMeans.centroids) {
+    		C_old.add(new Point(centroid));
+    	}
+    }
+    
+    /**
+     * Check if C_old and C_new are the same. If yes, return false else true.
+     */
+    public boolean isChangedCentroid() {
+    	ArrayList<Point> C_new = KMeans.centroids;
+    	
+    	if (C_old.size() != C_new.size()) {
+    		return true;
+    	}
+    	
+    	for (int i = 0; i < C_old.size(); i++) {
+    		if (C_old.get(i).compareTo(C_new.get(i)) != 0) {
+    			return true;
+    		}
+    	}
+    	
+    	return false;	
     }
 }

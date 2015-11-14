@@ -14,8 +14,9 @@ import org.apache.hadoop.io.*; // Writable
  */
 public class Point {
 
-    private ArrayList<Integer> pointDims = new ArrayList<Integer>;
+    private ArrayList<Float> pointDims = new ArrayList<Float>;
     private int dim;
+    
     /**
      * Construct a Point with the given dimensions [dim]. The coordinates should all be 0.
      * For example:
@@ -25,7 +26,7 @@ public class Point {
     {
     	this.dim = dim;
         for(int i = 0; i < dim; i++) {
-        	pointDims.add(new Integer(0));
+        	pointDims.add(new Float(0.0f));
         }
     }
 
@@ -42,7 +43,7 @@ public class Point {
         dim = values.length;
         
 		for (String value: values) {
-			pointDims.add(Integer.parseInt(value));
+			pointDims.add(Float.parseInt(value));
 		}
     }
 
@@ -58,14 +59,14 @@ public class Point {
     /**
      * @return The point dims of the point.
      */
-    public ArrayList<Integer> getPointDims() {
+    public ArrayList<Float> getPointDims() {
     	return pointDims;
     }
 
     /**
      * Setter for pointDims
      */
-    public void setPointsDims(ArrayList<Integer> pointDims) {
+    public void setPointsDims(ArrayList<Float> pointDims) {
     	this.pointDims.addAll(pointDims);
     }
     
@@ -87,7 +88,7 @@ public class Point {
      */
     public String toString() {
         String result = "";
-        for (Integer value: pointDims) {
+        for (Float value: pointDims) {
         	result += value + " ";
         }
         return result.substring(0, result.length-1);
@@ -128,8 +129,8 @@ public class Point {
 		}
 		
 		double squaredDistance = 0.0;
-		ArrayList<Integer> pointDims_x = x.getPointDims();
-		ArrayList<Integer> pointDims_y = y.getPointDims();
+		ArrayList<Float> pointDims_x = x.getPointDims();
+		ArrayList<Float> pointDims_y = y.getPointDims();
 	
 		for (int i = 0; i < x.getDimension(); i++) {
 			double diff = Math.abs(pointDims_x.get(i) - pointDims_y.get(i));
@@ -149,12 +150,12 @@ public class Point {
         }
 
         Point result = new Point(x.getDimension());
-        ArrayList<Integer> dims = new ArrayList<Integer>();
-		ArrayList<Integer> pointDims_x = x.getPointDims();
-		ArrayList<Integer> pointDims_y = y.getPointDims();
+        ArrayList<Float> dims = new ArrayList<Float>();
+		ArrayList<Float> pointDims_x = x.getPointDims();
+		ArrayList<Float> pointDims_y = y.getPointDims();
         
 		for (int i = 0; i <= x.getDimension(); i++) {
-			dims.add(new Integer(pointDims_x.get(i) + pointDims_y.get(i)));
+			dims.add(new Float(pointDims_x.get(i) + pointDims_y.get(i)));
 		}
 		
 		result.setPointsDims(dims);
@@ -167,10 +168,10 @@ public class Point {
     public static final Point multiplyScalar(Point x, float c)
     {
         Point result = new Point(x.getDimension());
-        ArrayList<Integer> dims = new ArrayList<Integer>();
+        ArrayList<Float> dims = new ArrayList<Float>();
         
 		for (int i = 0; i <= x.getDimension(); i++) {
-			dims.add(new Integer(pointDims_x.get(i)*c);
+			dims.add(new Float(pointDims_x.get(i)*c);
 		}
 		
 		result.setPointsDims(dims);
