@@ -26,7 +26,7 @@ public class Point {
     {
     	this.dim = dim;
         for(int i = 0; i < dim; i++) {
-        	pointDims.add(new Float(0.0f));
+        	pointDims.add(new Float(0));
         }
     }
 
@@ -67,7 +67,8 @@ public class Point {
      * Setter for pointDims
      */
     public void setPointsDims(ArrayList<Float> pointDims) {
-    	this.pointDims.addAll(pointDims);
+    	pointDims.clear();
+    	pointDims.addAll(pointDims);
     }
     
     /**
@@ -155,7 +156,7 @@ public class Point {
 		ArrayList<Float> pointDims_y = y.getPointDims();
         
 		for (int i = 0; i < x.getDimension(); i++) {
-			dims.add(new Float(pointDims_x.get(i) + pointDims_y.get(i)));
+			dims.set(i, new Float(pointDims_x.get(i) + pointDims_y.get(i)));
 		}
 		
 		result.setPointsDims(dims);
