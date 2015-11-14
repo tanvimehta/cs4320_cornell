@@ -38,9 +38,6 @@ public class UpdateJobRunner
         updateJob.setOutputKeyClass(IntWritable.class);
         updateJob.setOutputValueClass(Point.class);
         FileInputFormat.addInputPath(updateJob, new Path(inputDirectory));
-        System.out.println("///////////////");
-        System.out.println(outputDirectory+ "/" + Integer.toString(jobId));
-        System.out.println("///////////////");
         FileOutputFormat.setOutputPath(updateJob, new Path(outputDirectory + "/" + Integer.toString(jobId)));
         updateJob.setInputFormatClass(KeyValueTextInputFormat.class);
 
@@ -73,7 +70,7 @@ public class UpdateJobRunner
     	
     	int iterations;
     	
-    	for (iterations = 0; iterations < maxIterations; iterations++) {
+    	for (iterations = 0; iterations < 4; iterations++) {
     		if (!centroidChangeFlag) {
     			break;
     		}
