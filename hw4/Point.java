@@ -128,13 +128,13 @@ public class Point {
 			System.exit(1);
 		}
 		
-		double squaredDistance = 0.0;
+		double squaredDistance = 0.0f;
 		ArrayList<Float> pointDims_x = x.getPointDims();
 		ArrayList<Float> pointDims_y = y.getPointDims();
 	
 		for (int i = 0; i < x.getDimension(); i++) {
 			double diff = Math.abs(pointDims_x.get(i) - pointDims_y.get(i));
-			squaredDistance = Math.pow(diff, 2);
+			squaredDistance += Math.pow(diff, 2);
 		}
 
         return (float)Math.sqrt(squaredDistance);
@@ -154,7 +154,7 @@ public class Point {
 		ArrayList<Float> pointDims_x = x.getPointDims();
 		ArrayList<Float> pointDims_y = y.getPointDims();
         
-		for (int i = 0; i <= x.getDimension(); i++) {
+		for (int i = 0; i < x.getDimension(); i++) {
 			dims.add(new Float(pointDims_x.get(i) + pointDims_y.get(i)));
 		}
 		
@@ -171,7 +171,7 @@ public class Point {
         ArrayList<Float> dims = new ArrayList<Float>();
         
         ArrayList<Float> pointDims_x = x.getPointDims();
-		for (int i = 0; i <= x.getDimension(); i++) {
+		for (int i = 0; i < x.getDimension(); i++) {
 			dims.add(new Float(pointDims_x.get(i)*c));
 		}
 		
