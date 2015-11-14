@@ -16,7 +16,7 @@ public class ClusterToPointReducer extends Reducer<IntWritable, Iterable<Point>,
 			throws IOException, InterruptedException {
 		
 		if (values.size() == 1) {
-			centroids.set(key.get(), values.get(0));
+			KMeans.centroids.set(key.get(), values.get(0));
 			return;
 		}
 		
