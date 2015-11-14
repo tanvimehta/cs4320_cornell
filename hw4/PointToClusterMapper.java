@@ -23,7 +23,8 @@ public class PointToClusterMapper extends Mapper<Text, Text, Integer, Point> {
 			Point centroid = new Point(KMeans.centroids.get(i));
 			float distToCentroid = Point.distance(centroid, currPoint);
 			
-			if (minDistance > distToCentroid || minDistance == Float.MAX_VALUE) {
+			if (minDistance > distToCentroid) {
+				minDistance = distToCentroid;
 				closestCentroidIndex = i;
 			}
 		}

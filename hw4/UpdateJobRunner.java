@@ -29,6 +29,22 @@ public class UpdateJobRunner
     public static Job createUpdateJob(int jobId, String inputDirectory, String outputDirectory)
         throws IOException {
         
+//    	Configuration conf = new Configuration();
+//    	        conf.addResource(new Path("/hadoop/projects/hadoop-2.7.1/conf/core-site.xml"));
+//    	        conf.addResource(new Path("/hadoop/projects/hadoop-2.7.1/conf/hdfs-site.xml"));
+//    	        
+//    	    Job init_job = new Job(conf, Integer.toString(jobId));
+//    	        init_job.setJarByClass(KMeans.class);
+//    	        init_job.setMapperClass(PointToClusterMapper.class);
+//    	        init_job.setMapOutputKeyClass(IntWritable.class);
+//    	        init_job.setMapOutputValueClass(Point.class);
+//    	        init_job.setReducerClass(ClusterToPointReducer.class);
+//    	        init_job.setOutputKeyClass(IntWritable.class);
+//    	        init_job.setOutputValueClass(Point.class);
+//    	        FileInputFormat.addInputPath(init_job, new Path(inputDirectory));
+//    	        FileOutputFormat.setOutputPath(init_job, new Path(outputDirectory+"/"+Integer.toString(jobId)));
+//    	        init_job.setInputFormatClass(KeyValueTextInputFormat.class);
+//    	        return init_job;
         Job updateJob = new Job(new Configuration(), Integer.toString(jobId));
         updateJob.setJarByClass(KMeans.class);
         updateJob.setMapperClass(PointToClusterMapper.class);
@@ -70,7 +86,7 @@ public class UpdateJobRunner
     	
     	int iterations;
     	
-    	for (iterations = 0; iterations < 1; iterations++) {
+    	for (iterations = 0; iterations < maxIterations; iterations++) {
     		if (!centroidChangeFlag) {
     			break;
     		}
