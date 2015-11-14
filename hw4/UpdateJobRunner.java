@@ -32,10 +32,10 @@ public class UpdateJobRunner
         Job updateJob = new Job(new Configuration(), Integer.toString(jobId));
         updateJob.setJarByClass(KMeans.class);
         updateJob.setMapperClass(PointToClusterMapper.class);
-        updateJob.setMapOutputKeyClass(Integer.class);
+        updateJob.setMapOutputKeyClass(IntWritable.class);
         updateJob.setMapOutputValueClass(Point.class);
         updateJob.setReducerClass(ClusterToPointReducer.class);
-        updateJob.setOutputKeyClass(Integer.class);
+        updateJob.setOutputKeyClass(IntWritable.class);
         updateJob.setOutputValueClass(Point.class);
         FileInputFormat.addInputPath(updateJob, new Path(inputDirectory));
         FileOutputFormat.setOutputPath(updateJob, new Path(outputDirectory + "/" + Integer.toString(jobId)));
