@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * You can modify this class as you see fit, as long as you correctly update the
  * global centroids.
  */
-public class ClusterToPointReducer extends Reducer<IntWritable, Iterable<Point>, Text, Text> {
+public class ClusterToPointReducer extends Reducer<IntWritable, Point, Text, Text> {
 	
 	protected void reduce(IntWritable key, Iterable<Point> values, Context context) 
 			throws IOException, InterruptedException {
