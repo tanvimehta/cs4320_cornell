@@ -24,8 +24,9 @@ public class ClusterToPointReducer extends Reducer<IntWritable, Iterable<Point>,
 			newCentroid = Point.addPoints(newCentroid, p);
 		}
 		
+		float scalar = 1.0f/(float)counter;
 		// Take the mean of all points by dividing sum of all points by counter
-		newCentroid = Point.multiplyScalar(newCentroid, (1.0f/(float)counter));
+		newCentroid = Point.multiplyScalar(newCentroid, scalar);
 		
 		KMeans.centroids.set(key.get(), newCentroid);
 	}

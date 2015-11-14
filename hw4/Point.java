@@ -134,7 +134,7 @@ public class Point implements WritableComparable<Point> {
 	
 		for (int i = 0; i < x.getDimension(); i++) {
 			double diff = Math.abs(pointDims_x.get(i) - pointDims_y.get(i));
-			squaredDistance += Math.pow(diff, 2);
+			squaredDistance += Math.pow(diff, 2.0);
 		}
 
         return (float)Math.sqrt(squaredDistance);
