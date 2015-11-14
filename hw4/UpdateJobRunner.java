@@ -35,7 +35,7 @@ public class UpdateJobRunner
         updateJob.setMapOutputKeyClass(Integer.class);
         updateJob.setMapOutputValueClass(Point.class);
         updateJob.setReducerClass(ClusterToPointReducer.class);
-        updateJob.setOutputKeyClass(IntWritable.class);
+        updateJob.setOutputKeyClass(Integer.class);
         updateJob.setOutputValueClass(Point.class);
         FileInputFormat.addInputPath(updateJob, new Path(inputDirectory));
         FileOutputFormat.setOutputPath(updateJob, new Path(outputDirectory + "/" + Integer.toString(jobId)));
