@@ -29,6 +29,6 @@ public class PointToClusterMapper extends Mapper<Text, Text, IntWritable, Point>
 			}
 		}
 		
-		context.write(closestCentroidIndex, currPoint);
+		context.write(new IntWritable(closestCentroidIndex), currPoint);
 	}
 }
