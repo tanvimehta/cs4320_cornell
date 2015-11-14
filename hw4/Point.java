@@ -108,10 +108,10 @@ public class Point {
         }
 
 		for (int i = 0; i < dim; i++) {
-			int diff = pointDims.get(i) - o.pointDims.get(i);
-			if (diff > 0 ) {
+			float diff = pointDims.get(i) - o.pointDims.get(i);
+			if (diff > 0.000001 ) {
 				return 1;
-			} else if (diff < 0) {
+			} else if (diff < 0.000001) {
 				return -1;
 			}
 		}
