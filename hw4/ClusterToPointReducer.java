@@ -15,6 +15,11 @@ public class ClusterToPointReducer extends Reducer<IntWritable, Iterable<Point>,
 	protected void reduce(IntWritable key, Iterable<Point> values, Context context) 
 			throws IOException, InterruptedException {
 		
+		if (values.size() == 1) {
+			centroids.set(key.get(), values.get(0));
+			return;
+		}
+		
 		int counter = 0;
 		Point newCentroid = new Point(KMeans.centroids.get(0).getDimension());
 		
