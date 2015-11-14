@@ -82,6 +82,16 @@ public class UpdateJobRunner
     		}
     		
     		centroidChangeFlag = isChangedCentroid();
+    		System.out.println("////////////////");
+    		System.out.println("////////////////");
+    		System.out.println("////////////////");
+    		System.out.println("////////////////");
+    		System.out.println(centroidChangeFlag);
+    		System.out.println("////////////////");
+    		System.out.println("////////////////");
+    		System.out.println("////////////////");
+    		System.out.println("////////////////");
+    		
     		C_old.clear();
     		C_old.addAll(KMeans.centroids);
     	}
