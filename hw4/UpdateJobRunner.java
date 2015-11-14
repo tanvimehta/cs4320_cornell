@@ -81,15 +81,6 @@ public class UpdateJobRunner
     		}
     		
     		centroidChangeFlag = isChangedCentroid(C_old);
-    		System.out.println("////////////////");
-    		System.out.println("////////////////");
-    		System.out.println("////////////////");
-    		System.out.println("////////////////");
-    		System.out.println(centroidChangeFlag);
-    		System.out.println("////////////////");
-    		System.out.println("////////////////");
-    		System.out.println("////////////////");
-    		System.out.println("////////////////");
     		
     		C_old.clear();
     		C_old.addAll(KMeans.centroids);
@@ -106,17 +97,6 @@ public class UpdateJobRunner
     	C_new.addAll(KMeans.centroids);
     	
     	for (int i = 0; i < C_old.size(); i++) {
-    		System.out.println("////////////////");
-    		System.out.println("////////////////");
-    		System.out.println("////////////////");
-    		System.out.println("////////////////");
-    		System.out.println("C_old = " + C_old.get(i));
-    		System.out.println("C_new = " + C_new.get(i));
-    		System.out.println("////////////////");
-    		System.out.println("////////////////");
-    		System.out.println("////////////////");
-    		System.out.println("////////////////");
-    		
     		if (C_old.get(i).compareTo(C_new.get(i)) != 0) {
     			return true;
     		}
