@@ -168,22 +168,20 @@ public class Point implements WritableComparable<Point> {
 		
 		return result;
     }
-    
-	public void write(DataOutput out) throws IOException {
+
+    public void readFields (DataInput in) throws IOException {
+		dim = in.readInt();
 		
-		int dim = getDimension();
+		for (int i=0; i<dim; i++)
+			pointDims.set(i,in.readFloat());
+	}
+
+	public void write(DataOutput out) throws IOException {   //must implement Writable
+		
 		out.writeInt(dim);
-		for (int i=0; i < dim; i++) {
+		
+		for (int i=0; i<dim; i++)
 			out.writeFloat(pointDims.get(i));
-		}
-	} 
-        
-    public void readFields(DataInput in) throws IOException {
-    	int dim = in.readInt();
-    	pointDims = new ArrayList<Float>();
-    	
-    	for (int i = 0; i < dim; i++){
-    		pointDims.add(in.readFloat());
-    	}
-    }
+	}
+    
 }
