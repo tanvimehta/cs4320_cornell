@@ -64,8 +64,8 @@ public class UpdateJobRunner
     	
     	boolean centroidChangeFlag = true;
     	
-    	C_Old = new ArrayList<Point>();
-    	C_Old.addAll(KMeans.centroids);
+    	C_old = new ArrayList<Point>();
+    	C_old.addAll(KMeans.centroids);
     	
     	int iterations;
     	
@@ -82,8 +82,8 @@ public class UpdateJobRunner
     		}
     		
     		centroidChangeFlag = isChangedCentroid();
-    		C_Old.clear();
-    		C_Old.addAll(KMeans.centroids);
+    		C_old.clear();
+    		C_old.addAll(KMeans.centroids);
     	}
     	
     	return iterations;
