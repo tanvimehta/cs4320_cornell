@@ -64,20 +64,15 @@ public class UpdateJobRunner
     	
     	boolean centroidChangeFlag = true;
     	
-    	for (Point centroid: KMeans.centroids) {
-    		C_old.add(new Point(centroid));
-    	}
+    	C_Old = new ArrayList<Point>();
+    	C_Old.addAll(KMeans.centroids);
     	
     	int iterations;
     	
     	for (iterations = 0; iterations < maxIterations; iterations++) {
     		if (!centroidChangeFlag) {
-    			break;
+    			return iterations;
     		}
-    		
-    		for(int i = 0; i < KMeans.centroids.size(); i++){
-                C_old.set(i,new Point(KMeans.centroids.get(i)));
-            }
     		
     		try {
     			Job currJob = createUpdateJob(iterations, inputDirectory, outputDirectory);
@@ -87,6 +82,8 @@ public class UpdateJobRunner
     		}
     		
     		centroidChangeFlag = isChangedCentroid();
+    		C_Old.clear();
+    		C_Old.addAll(KMeans.centroids);
     	}
     	
     	return iterations;
