@@ -108,7 +108,7 @@ public class Point implements WritableComparable<Point> {
         }
 
 		for (int i = 0; i < dim; i++) {
-			double diff = pointDims.get(i) - o.pointDims.get(i);
+			float diff = pointDims.get(i) - o.pointDims.get(i);
 			if (diff > 0.000001 ) {
 				return 1;
 			} else if (diff < 0.000001) {

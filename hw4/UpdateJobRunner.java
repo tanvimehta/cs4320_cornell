@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 public class UpdateJobRunner
 {
-	public static ArrayList<Point> C_old = new ArrayList<Point>();
 	
     /**
      * Create a map-reduce job to update the current centroids.
@@ -64,7 +63,7 @@ public class UpdateJobRunner
     	
     	boolean centroidChangeFlag = true;
     	
-    	C_old = new ArrayList<Point>();
+    	ArrayList<Point> C_old = new ArrayList<Point>();
     	C_old.addAll(KMeans.centroids);
     	
     	int iterations;
