@@ -95,10 +95,6 @@ public class UpdateJobRunner
     public static boolean isChangedCentroid() {
     	ArrayList<Point> C_new = KMeans.centroids;
     	
-    	if (C_old.size() != C_new.size()) {
-    		return true;
-    	}
-    	
     	for (int i = 0; i < C_old.size(); i++) {
     		if (C_old.get(i).compareTo(C_new.get(i)) != 0) {
     			return true;
