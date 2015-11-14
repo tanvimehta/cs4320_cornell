@@ -60,7 +60,6 @@ public class Point implements WritableComparable<Point> {
     public Point(Point other)
     {
         dim = other.dim;
-        pointDims = new ArrayList<Point>();
         pointDims.addAll(other.getPointDims());
     }
 
