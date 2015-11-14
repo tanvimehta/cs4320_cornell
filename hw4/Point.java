@@ -14,7 +14,7 @@ import org.apache.hadoop.io.*; // Writable
  */
 public class Point {
 
-    private ArrayList<Float> pointDims = new ArrayList<Float>;
+    private ArrayList<Float> pointDims = new ArrayList<Float>();
     private int dim;
     
     /**
@@ -43,7 +43,7 @@ public class Point {
         dim = values.length;
         
 		for (String value: values) {
-			pointDims.add(Float.parseInt(value));
+			pointDims.add(Float.parseFloat(value));
 		}
     }
 
@@ -53,7 +53,7 @@ public class Point {
     public Point(Point other)
     {
         dim = other.getDimension();
-        pointDims.addAll(other.getPointDims);
+        pointDims.addAll(other.getPointDims());
     }
 
     /**
@@ -91,7 +91,7 @@ public class Point {
         for (Float value: pointDims) {
         	result += value + " ";
         }
-        return result.substring(0, result.length-1);
+        return result.substring(0, result.length()-1);
     }
 
     /**
@@ -102,13 +102,13 @@ public class Point {
      */
     public int compareTo(Point o)
     {   
-        if (dim != other.getDimension) {
+        if (dim != o.getDimension()) {
         	System.err.println("Points have different dimensions.");
         	System.exit(1);
         }
 
 		for (int i = 0; i < dim; i++) {
-			int diff = pointDims.get(i) - other.pointDims.get(i);
+			int diff = pointDims.get(i) - o.pointDims.get(i);
 			if (diff > 0 ) {
 				return 1;
 			} else if (diff < 0) {
@@ -170,8 +170,9 @@ public class Point {
         Point result = new Point(x.getDimension());
         ArrayList<Float> dims = new ArrayList<Float>();
         
+        ArrayList<Float> pointDims_x = x.getPointDims();
 		for (int i = 0; i <= x.getDimension(); i++) {
-			dims.add(new Float(pointDims_x.get(i)*c);
+			dims.add(new Float(pointDims_x.get(i)*c));
 		}
 		
 		result.setPointsDims(dims);

@@ -25,10 +25,10 @@ public class PointToClusterMapper extends Mapper<Text, Text, Text, Text> {
 			float distToCentroid = Point.distance(centroid, currPoint);
 			
 			if (minDistance > distToCentroid || minDistance == Float.MAX_VALUE) {
-				closestCentroidIndex
+				closestCentroidIndex = i;
 			}
 		}
 		
-		context.write(new IntWritable(nearestIndex), currPoint);
+		context.write(new IntWritable(closestCentroidIndex), currPoint);
 	}
 }

@@ -32,11 +32,11 @@ public class UpdateJobRunner
     	Job updateJob = new Job(new Configuration(), Integer.toString(jobId));
     	updateJob.setJarByClass(KMeans.class);
     	updateJob.setMapperClass(PointToClusterMapper.class);
-    	updateJob.MapOutputKeyClass(IntWritable.class);
+    	updateJob.setMapOutputKeyClass(IntWritable.class);
     	updateJob.setMapOutputValueClass(Point.class);
     	updateJob.setReducerClass(ClusterToPointReducer.class);
     	updateJob.setOutputKeyClass(IntWritable.class);
-    	update.setOutputValueClass(Point.class);
+    	updateJob.setOutputValueClass(Point.class);
         FileInputFormat.addInputPath(updateJob, new Path(inputDirectory));
         FileOutputFormat.setOutputPath(updateJob, new Path(outputDirectory));
         updateJob.setInputFormatClass(KeyValueTextInputFormat.class);
@@ -71,7 +71,7 @@ public class UpdateJobRunner
     		}
     		addCentroidsToC_old();
     		try {
-    			Job currJob = createUpdateJob(iteration, inputDirectory, outputDirectory);
+    			Job currJob = createUpdateJob(iterations, inputDirectory, outputDirectory);
     			currJob.waitForCompletion(true);
     		} catch (Exception e) {
     			System.out.println("Update job failed at creation.");
@@ -86,7 +86,7 @@ public class UpdateJobRunner
     /**
      * Add centroids to C_Old
      */
-    public void addCentroidsToC_old() {
+    public static void addCentroidsToC_old() {
     	C_old.clear();
     	for (Point centroid: KMeans.centroids) {
     		C_old.add(new Point(centroid));
@@ -96,7 +96,7 @@ public class UpdateJobRunner
     /**
      * Check if C_old and C_new are the same. If yes, return false else true.
      */
-    public boolean isChangedCentroid() {
+    public static boolean isChangedCentroid() {
     	ArrayList<Point> C_new = KMeans.centroids;
     	
     	if (C_old.size() != C_new.size()) {
