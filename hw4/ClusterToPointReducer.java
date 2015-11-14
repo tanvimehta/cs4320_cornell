@@ -15,11 +15,6 @@ public class ClusterToPointReducer extends Reducer<IntWritable, Iterable<Point>,
 	protected void reduce(IntWritable key, Iterable<Point> values, Context context) 
 			throws IOException, InterruptedException {
 		
-		if (values.size() == 1) {
-			KMeans.centroids.set(key.get(), values.get(0));
-			return;
-		}
-		
 		int counter = 0;
 		Point newCentroid = new Point(KMeans.centroids.get(0).getDimension());
 		
@@ -29,7 +24,11 @@ public class ClusterToPointReducer extends Reducer<IntWritable, Iterable<Point>,
 			newCentroid = Point.addPoints(newCentroid, p);
 		}
 		
-		float scalar = 1.0f/(float)counter;
+		float scalar = 0.0f;
+		if (counter != 0) {
+			scalar = 1.0f/(float)counter;
+		}
+		
 		// Take the mean of all points by dividing sum of all points by counter
 		newCentroid = Point.multiplyScalar(newCentroid, scalar);
 				

@@ -20,8 +20,8 @@ public class Point implements WritableComparable<Point> {
 	public Point() {
 		this.dim = KMeans.dimension;
 		
-		for(int i=0; i<dim; i++) 
-			pointDims.add(new Float(0.0));
+		for (int i = 0; i < dim; i++) 
+			pointDims.add(new Float(0.0f));
 	}
     
     /**
@@ -32,7 +32,7 @@ public class Point implements WritableComparable<Point> {
     public Point(int dim)
     {
     	this.dim = dim;
-        for(int i = 0; i < dim; i++) {
+        for (int i = 0; i < dim; i++) {
         	pointDims.add(new Float(0.0f));
         }
     }
@@ -59,7 +59,8 @@ public class Point implements WritableComparable<Point> {
      */
     public Point(Point other)
     {
-        dim = other.getDimension();
+        dim = other.dim;
+        pointDims = new ArrayList<Point>();
         pointDims.addAll(other.getPointDims());
     }
 
@@ -74,8 +75,7 @@ public class Point implements WritableComparable<Point> {
      * @return The dimension of the point.  For example, the point [x=0, y=1] has
      * a dimension of 2.
      */
-    public int getDimension()
-    {
+    public int getDimension() {
         return dim;
     }
 
@@ -144,7 +144,8 @@ public class Point implements WritableComparable<Point> {
      * @return A new point equal to [x]+[y]
      */
     public static final Point addPoints(Point x, Point y) {
-        if (x.getDimension() != y.getDimension()) {
+        
+    	if (x.getDimension() != y.getDimension()) {
         	System.err.println("Points have different dimensions.");
         	System.exit(1);
         }
@@ -154,7 +155,7 @@ public class Point implements WritableComparable<Point> {
 		ArrayList<Float> pointDims_y = y.getPointDims();
         
 		for (int i = 0; i < x.getDimension(); i++) {
-			result.pointDims.set(i, new Float(pointDims_x.get(i) + pointDims_y.get(i)));
+			result.pointDims.set(i, new Float(pointDims_x.get(i).floatValue() + pointDims_y.get(i).floatValue()));
 		}
 		
 		return result;
@@ -170,7 +171,7 @@ public class Point implements WritableComparable<Point> {
         
         ArrayList<Float> pointDims_x = x.getPointDims();
 		for (int i = 0; i < x.getDimension(); i++) {
-			result.pointDims.set(i, new Float(pointDims_x.get(i)*c));
+			result.pointDims.set(i, new Float(pointDims_x.get(i).floatValue()*c));
 		}
 		
 		return result;
