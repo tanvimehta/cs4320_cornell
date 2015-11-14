@@ -70,7 +70,7 @@ public class UpdateJobRunner
     	
     	int iterations;
     	
-    	for (iterations = 0; iterations < 4; iterations++) {
+    	for (iterations = 0; iterations < 1; iterations++) {
     		if (!centroidChangeFlag) {
     			break;
     		}
