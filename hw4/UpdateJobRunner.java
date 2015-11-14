@@ -80,7 +80,7 @@ public class UpdateJobRunner
     			System.out.println("Update job failed at creation.");
     		}
     		
-    		centroidChangeFlag = isChangedCentroid();
+    		centroidChangeFlag = isChangedCentroid(C_old);
     		System.out.println("////////////////");
     		System.out.println("////////////////");
     		System.out.println("////////////////");
@@ -101,10 +101,22 @@ public class UpdateJobRunner
     /**
      * Check if C_old and C_new are the same. If yes, return false else true.
      */
-    public static boolean isChangedCentroid() {
-    	ArrayList<Point> C_new = KMeans.centroids;
+    public static boolean isChangedCentroid(ArrayList<Point> C_old) {
+    	ArrayList<Point> C_new = new ArrayList<Point>();
+    	C_new.addAll(KMeans.centroids);
     	
     	for (int i = 0; i < C_old.size(); i++) {
+    		System.out.println("////////////////");
+    		System.out.println("////////////////");
+    		System.out.println("////////////////");
+    		System.out.println("////////////////");
+    		System.out.println("C_old = " + C_old.get(i));
+    		System.out.println("C_new = " + C_new.get(i));
+    		System.out.println("////////////////");
+    		System.out.println("////////////////");
+    		System.out.println("////////////////");
+    		System.out.println("////////////////");
+    		
     		if (C_old.get(i).compareTo(C_new.get(i)) != 0) {
     			return true;
     		}
