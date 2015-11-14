@@ -156,7 +156,7 @@ public class Point {
 		ArrayList<Float> pointDims_y = y.getPointDims();
         
 		for (int i = 0; i < x.getDimension(); i++) {
-			dims.add(i, new Float(pointDims_x.get(i) + pointDims_y.get(i)));
+			dims.add(new Float(pointDims_x.get(i) + pointDims_y.get(i)));
 		}
 		
 		result.setPointsDims(dims);
