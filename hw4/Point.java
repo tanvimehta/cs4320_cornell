@@ -62,14 +62,6 @@ public class Point {
     public ArrayList<Float> getPointDims() {
     	return pointDims;
     }
-
-    /**
-     * Setter for pointDims
-     */
-    public void setPointsDims(ArrayList<Float> pointDims) {
-    	pointDims.clear();
-    	pointDims.addAll(pointDims);
-    }
     
     /**
      * @return The dimension of the point.  For example, the point [x=0, y=1] has
