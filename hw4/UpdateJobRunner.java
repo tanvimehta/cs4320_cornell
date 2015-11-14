@@ -63,14 +63,22 @@ public class UpdateJobRunner
         String outputDirectory) {
     	
     	boolean centroidChangeFlag = true;
-    	addCentroidsToC_old();
+    	
+    	for (Point centroid: KMeans.centroids) {
+    		C_old.add(new Point(centroid));
+    	}
+    	
     	int iterations = 0;
     	
     	for (iterations = 0; iterations < maxIterations; iterations++) {
     		if (!centroidChangeFlag) {
     			break;
     		}
-    		addCentroidsToC_old();
+    		
+    		for(int i = 0; i < KMeans.centroids.size(); i++){
+                C_old.set(i,new Point(KMeans.centroids.get(i)));
+            }
+    		
     		try {
     			Job currJob = createUpdateJob(iterations, inputDirectory, outputDirectory);
     			currJob.waitForCompletion(true);
@@ -82,16 +90,6 @@ public class UpdateJobRunner
     	}
     	
     	return iterations;
-    }
-    
-    /**
-     * Add centroids to C_Old
-     */
-    public static void addCentroidsToC_old() {
-    	C_old.clear();
-    	for (Point centroid: KMeans.centroids) {
-    		C_old.add(new Point(centroid));
-    	}
     }
     
     /**
