@@ -117,6 +117,23 @@ public class Point implements WritableComparable<Point> {
         return 0;
     }
 
+    public int l2Compare(Point o) {
+    	if (dim != o.getDimension()) {
+        	System.err.println("Points have different dimensions.");
+        	System.exit(1);
+        }
+    	
+    	for (int i = 0; i < dim; i++) {
+			float diff = distance(this, o);
+    		if (diff > 0.00001) {
+				return 1;
+			} else if (diff < -0.00001) {
+				return -1;
+			}
+		}
+        return 0;
+    }
+    
     /**
      * @return The L2 distance between two points.
      */

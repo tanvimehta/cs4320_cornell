@@ -97,7 +97,7 @@ public class UpdateJobRunner
     	C_new.addAll(KMeans.centroids);
     	
     	for (int i = 0; i < C_old.size(); i++) {
-    		if (C_old.get(i).compareTo(C_new.get(i)) != 0) {
+    		if (C_old.get(i).l2Compare(C_new.get(i)) != 0) {
     			return true;
     		}
     	}
