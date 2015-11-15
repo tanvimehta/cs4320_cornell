@@ -24,7 +24,12 @@ public class ClusterToPointReducer extends Reducer<IntWritable, Point, Text, Tex
 			newCentroid = Point.addPoints(newCentroid, p);
 		}
 		
-		 float scalar = 1.0f/(float)counter;
+		// If centroid has 0 nighbours, centroid should remain but value should not change
+		if (counter == 0) {
+			return;
+		}
+		
+		float scalar = 1.0f/(float)counter;
 		
 		// Take the mean of all points by dividing sum of all points by counter
 		newCentroid = Point.multiplyScalar(newCentroid, scalar);
