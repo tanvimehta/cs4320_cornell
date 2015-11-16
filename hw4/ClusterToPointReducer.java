@@ -16,16 +16,19 @@ public class ClusterToPointReducer extends Reducer<IntWritable, Point, Text, Tex
 			throws IOException, InterruptedException {
 		
 		int counter = 0;
-		Point newCentroid = new Point(KMeans.centroids.get(0).getDimension());
+		Point newCentroid = null;
 		
 		// Add all points and maintain counter for the mean
 		for (Point p: values) {
+			if (counter == 0) {
+				 newCentroid = new Point(KMeans.centroids.get(0).getDimension());
+			}
 			counter++;
 			newCentroid = Point.addPoints(newCentroid, p);
 		}
 		
 		// If centroid has 0 nighbours, centroid should remain but value should not change
-		if (counter == 0) {
+		if (counter == 0 || newCentroid == null) {
 			return;
 		}
 		

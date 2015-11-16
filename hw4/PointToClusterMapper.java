@@ -20,8 +20,7 @@ public class PointToClusterMapper extends Mapper<Text, Text, IntWritable, Point>
 		
 		// Get closest index of centroid
 		for (int i = 0; i < KMeans.centroids.size(); i++) {
-			Point centroid = new Point(KMeans.centroids.get(i));
-			float distToCentroid = Point.distance(centroid, currPoint);
+			float distToCentroid = Point.distance(KMeans.centroids.get(i), currPoint);
 			
 			if (minDistance > distToCentroid) {
 				minDistance = distToCentroid;
