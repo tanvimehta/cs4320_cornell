@@ -59,3 +59,8 @@ ktest4:
 	rm -rf output/
 	rm -f centroids
 	CLASSPATH=$(CLASS_PATH) $(HADOOP) jar $(MAIN).jar $(MAIN) 2 2 kmeans_test4/points/points1.txt output kmeans_test4/centroids/centroids.txt
+	
+ktest5:
+	rm -rf output/
+	rm -f centroids
+	CLASSPATH=$(CLASS_PATH) $(HADOOP) jar $(MAIN).jar $(MAIN) 2 2 kmeans_test5/points/points1.txt output kmeans_test5/centroids/centroids.txt
